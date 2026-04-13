@@ -26,7 +26,7 @@ import { useState, useEffect } from "react";
 import { Logo } from "@/components/logo";
 
 
-const ease = [0.25, 1, 0.5, 1];
+const ease = [0.25, 1, 0.5, 1] as const;
 
 const fadeUp = {
   hidden: { opacity: 0, y: 50 },

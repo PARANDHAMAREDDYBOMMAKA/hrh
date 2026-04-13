@@ -8,7 +8,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Eye, EyeOff, Loader2, CheckCircle, ArrowRight } from "lucide-react";
 import { Logo } from "@/components/logo";
 
-const ease = [0.22, 1, 0.36, 1];
+const ease = [0.22, 1, 0.36, 1] as const;
 
 const stagger = {
   hidden: {},

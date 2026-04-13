@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 import { Eye, EyeOff, Loader2, KeyRound } from "lucide-react";
 import { Logo } from "@/components/logo";
 
-const ease = [0.25, 1, 0.5, 1];
+const ease = [0.25, 1, 0.5, 1] as const;
 
 function ChangePasswordForm() {
   const router = useRouter();
