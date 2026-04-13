@@ -55,7 +55,7 @@ export default function AdminLayout({
     <div className="min-h-screen flex bg-[#fafaf9]">
       {/* Sidebar */}
       <aside
-        className={`fixed inset-y-0 left-0 z-50 w-[260px] bg-white border-r border-black/[0.04] transform transition-transform duration-500 ease-[cubic-bezier(0.25,1,0.5,1)] lg:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-50 w-65 bg-white border-r border-black/4 transform transition-transform duration-500 ease-[cubic-bezier(0.25,1,0.5,1)] lg:translate-x-0 ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
