@@ -30,9 +30,9 @@ export default function NotFound() {
   return (
     <div className="relative min-h-screen flex flex-col bg-background overflow-hidden">
       {/* Gradient orbs */}
-      <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] rounded-full bg-gradient-to-br from-orange-300/40 to-amber-200/20 blur-3xl pointer-events-none" />
-      <div className="absolute bottom-[-20%] right-[-10%] w-[600px] h-[600px] rounded-full bg-gradient-to-tl from-orange-400/30 to-rose-200/20 blur-3xl pointer-events-none" />
-      <div className="absolute top-1/3 right-1/4 w-[300px] h-[300px] rounded-full bg-amber-100/40 blur-3xl pointer-events-none" />
+      <div className="absolute top-[-20%] left-[-10%] w-125 h-125 rounded-full bg-linear-to-br from-orange-300/40 to-amber-200/20 blur-3xl pointer-events-none" />
+      <div className="absolute bottom-[-20%] right-[-10%] w-150 h-150 rounded-full bg-linear-to-tl from-orange-400/30 to-rose-200/20 blur-3xl pointer-events-none" />
+      <div className="absolute top-1/3 right-1/4 w-75 h-75 rounded-full bg-amber-100/40 blur-3xl pointer-events-none" />
 
       {/* Grid background */}
       <div
@@ -123,7 +123,7 @@ export default function NotFound() {
                   initial={{ opacity: 0, y: 60, rotate: -20 }}
                   animate={{ opacity: 1, y: 0, rotate: -6 }}
                   transition={{ duration: 0.8, delay: 0.3, ease }}
-                  className="text-[6rem] md:text-[10rem] font-black tracking-tighter bg-gradient-to-br from-orange-500 to-amber-400 bg-clip-text text-transparent leading-none drop-shadow-sm"
+                  className="text-[6rem] md:text-[10rem] font-black tracking-tighter bg-linear-to-br from-orange-500 to-amber-400 bg-clip-text text-transparent leading-none drop-shadow-sm"
                 >
                   4
                 </motion.span>
@@ -146,7 +146,7 @@ export default function NotFound() {
                   }}
                   className="relative"
                 >
-                  <div className="w-[5rem] h-[5rem] md:w-[8rem] md:h-[8rem] rounded-full bg-gradient-to-br from-foreground to-foreground/80 flex items-center justify-center shadow-xl">
+                  <div className="w-20 h-20 md:w-32 md:h-32 rounded-full bg-linear-to-br from-foreground to-foreground/80 flex items-center justify-center shadow-xl">
                     <Search
                       className="w-10 h-10 md:w-16 md:h-16 text-orange-400"
                       strokeWidth={2}
@@ -158,7 +158,7 @@ export default function NotFound() {
                   initial={{ opacity: 0, y: 60, rotate: 20 }}
                   animate={{ opacity: 1, y: 0, rotate: 6 }}
                   transition={{ duration: 0.8, delay: 0.4, ease }}
-                  className="text-[6rem] md:text-[10rem] font-black tracking-tighter bg-gradient-to-br from-amber-400 to-orange-500 bg-clip-text text-transparent leading-none drop-shadow-sm"
+                  className="text-[6rem] md:text-[10rem] font-black tracking-tighter bg-linear-to-br from-amber-400 to-orange-500 bg-clip-text text-transparent leading-none drop-shadow-sm"
                 >
                   4
                 </motion.span>
