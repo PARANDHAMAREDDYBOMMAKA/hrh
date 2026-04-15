@@ -121,7 +121,7 @@ function Navbar() {
             Sign In
           </Link>
           <Link
-            href="/register"
+            href="/login?mode=register"
             className="text-[13px] bg-foreground text-background px-5 py-2.5 rounded-full font-medium hover:opacity-80 transition-all duration-400 btn-smooth"
           >
             Get Started
@@ -135,6 +135,8 @@ function Navbar() {
           {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
         </button>
       </div>
+
+
 
       {mobileOpen && (
         <motion.div
@@ -159,7 +161,7 @@ function Navbar() {
               Sign In
             </Link>
             <Link
-              href="/register"
+              href="/login?mode=register"
               className="bg-foreground text-background py-3 rounded-xl text-center font-medium text-sm"
             >
               Get Started
@@ -174,7 +176,7 @@ function Navbar() {
 function HeroSection() {
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-orange-50/60 via-white to-white" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,var(--tw-gradient-stops))] from-orange-50/60 via-white to-white" />
 
       <div className="relative z-10 max-w-6xl mx-auto px-6 text-center">
         <motion.div
@@ -194,12 +196,12 @@ function HeroSection() {
           className="text-5xl md:text-6xl lg:text-[5rem] font-extrabold tracking-tight leading-[1.05] text-foreground"
         >
           Where{" "}
-          <span className="bg-gradient-to-r from-orange-500 to-amber-400 bg-clip-text text-transparent">
+          <span className="bg-linear-to-r from-orange-500 to-amber-400 bg-clip-text text-transparent">
             Hotels
           </span>{" "}
           Meet
           <br />
-          <span className="bg-gradient-to-r from-orange-500 to-amber-400 bg-clip-text text-transparent">
+          <span className="bg-linear-to-r from-orange-500 to-amber-400 bg-clip-text text-transparent">
             Restaurants
           </span>
         </motion.h1>
@@ -221,7 +223,7 @@ function HeroSection() {
           className="flex flex-col sm:flex-row items-center justify-center gap-4"
         >
           <Link
-            href="/register"
+            href="/login?mode=register"
             className="group flex items-center gap-2.5 bg-foreground text-background px-8 py-4 rounded-full text-sm font-semibold btn-smooth hover:shadow-soft-lg"
           >
             Start Free Today
@@ -297,7 +299,7 @@ function FeaturesSection() {
               variants={fadeIn}
               className="group relative p-8 rounded-3xl bg-white shadow-soft card-hover"
             >
-              <span className="absolute top-6 right-6 text-5xl font-black text-foreground/[0.02] group-hover:text-orange-500/[0.06] transition-colors duration-700">
+              <span className="absolute top-6 right-6 text-5xl font-black text-foreground/2 group-hover:text-orange-500/6 transition-colors duration-700">
                 {feature.number}
               </span>
               <div className="w-12 h-12 rounded-2xl bg-orange-50 flex items-center justify-center mb-6 group-hover:bg-orange-100 transition-colors duration-500">
@@ -327,7 +329,7 @@ function HowItWorksSection() {
 
   return (
     <RevealSection
-      className="py-32 bg-gradient-to-b from-accent/30 to-white relative"
+      className="py-32 bg-linear-to-b from-accent/30 to-white relative"
     >
       <div className="max-w-6xl mx-auto px-6" id="how-it-works">
         <motion.div variants={fadeUp} className="text-center mb-20">
@@ -343,7 +345,7 @@ function HowItWorksSection() {
           {steps.map((step, i) => (
             <motion.div key={step.step} variants={fadeUp} className="relative text-center">
               {i < steps.length - 1 && (
-                <div className="hidden md:block absolute top-14 left-[60%] w-[80%] h-px bg-gradient-to-r from-border to-transparent z-0" />
+                <div className="hidden md:block absolute top-14 left-[60%] w-[80%] h-px bg-linear-to-r from-border to-transparent z-0" />
               )}
               <div className="relative z-10">
                 <div className="w-28 h-28 rounded-3xl bg-white shadow-soft flex items-center justify-center mx-auto mb-8 card-hover">
@@ -415,7 +417,7 @@ function PricingSection() {
               ))}
             </ul>
             <Link
-              href="/register"
+              href="/login?mode=register"
               className="mt-10 block text-center py-3.5 rounded-xl border-2 border-foreground text-foreground text-sm font-semibold hover:bg-foreground hover:text-background transition-all duration-500"
             >
               Get Started
@@ -460,7 +462,7 @@ function PricingSection() {
               ))}
             </ul>
             <Link
-              href="/register"
+              href="/login?mode=register"
               className="mt-10 block text-center py-3.5 rounded-xl bg-white text-foreground text-sm font-semibold hover:opacity-90 transition-all duration-500"
             >
               Start 14-day Trial
@@ -480,7 +482,7 @@ function TestimonialsSection() {
   ];
 
   return (
-    <RevealSection className="py-32 bg-gradient-to-b from-white to-accent/20 relative">
+    <RevealSection className="py-32 bg-linear-to-b from-white to-accent/20 relative">
       <div className="max-w-6xl mx-auto px-6" id="testimonials">
         <motion.div variants={fadeUp} className="text-center mb-20">
           <span className="text-[11px] text-orange-500 font-bold tracking-[0.2em] uppercase">
@@ -510,7 +512,7 @@ function TestimonialsSection() {
                 &quot;{t.content}&quot;
               </p>
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-orange-400 to-amber-400 flex items-center justify-center text-white font-bold text-sm">
+                <div className="w-10 h-10 rounded-full bg-linear-to-br from-orange-400 to-amber-400 flex items-center justify-center text-white font-bold text-sm">
                   {t.name[0]}
                 </div>
                 <div>
@@ -539,10 +541,10 @@ function CTASection() {
           initial={{ opacity: 0, scale: 0.95 }}
           animate={isInView ? { opacity: 1, scale: 1 } : {}}
           transition={{ duration: 0.8, ease }}
-          className="p-14 md:p-20 rounded-[2rem] bg-foreground text-background relative overflow-hidden shadow-soft-lg"
+          className="p-14 md:p-20 rounded-4xl bg-foreground text-background relative overflow-hidden shadow-soft-lg"
         >
-          <div className="absolute top-0 right-0 w-72 h-72 bg-white/[0.04] rounded-full -translate-y-1/3 translate-x-1/3" />
-          <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/[0.03] rounded-full translate-y-1/2 -translate-x-1/3" />
+          <div className="absolute top-0 right-0 w-72 h-72 bg-white/4 rounded-full -translate-y-1/3 translate-x-1/3" />
+          <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/3 rounded-full translate-y-1/2 -translate-x-1/3" />
           <div className="relative z-10">
             <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight">
               Ready to Transform
@@ -554,7 +556,7 @@ function CTASection() {
               and hotel residents.
             </p>
             <Link
-              href="/register"
+              href="/login?mode=register"
               className="inline-flex items-center gap-2.5 bg-white text-foreground px-8 py-4 rounded-full text-sm font-bold btn-smooth hover:shadow-soft-lg"
             >
               Get Started Now
