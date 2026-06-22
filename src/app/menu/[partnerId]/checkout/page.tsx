@@ -91,9 +91,9 @@ export default function CheckoutPage() {
   return (
     <div className="min-h-screen bg-[#fafaf9]">
       {/* Header */}
-      <header className="sticky top-0 z-30 bg-white/80 backdrop-blur-2xl border-b border-black/[0.04] px-4 py-3.5">
+      <header className="sticky top-0 z-30 bg-white/80 backdrop-blur-2xl border-b border-black/4 px-4 py-3.5">
         <div className="max-w-2xl mx-auto flex items-center gap-3">
-          <Link href={`/menu/${params.partnerId}`} className="p-2 rounded-lg hover:bg-black/[0.03] text-foreground/30 hover:text-foreground transition-colors">
+          <Link href={`/menu/${params.partnerId}`} className="p-2 rounded-lg hover:bg-black/3 text-foreground/30 hover:text-foreground transition-colors">
             <ArrowLeft className="w-4 h-4" />
           </Link>
           <h1 className="font-bold text-[15px] tracking-tight">Checkout</h1>
@@ -102,7 +102,7 @@ export default function CheckoutPage() {
 
       <div className="max-w-2xl mx-auto px-4 py-5 space-y-4">
         {/* Order summary */}
-        <div className="rounded-2xl bg-white border border-black/[0.04] p-5">
+        <div className="rounded-2xl bg-white border border-black/4 p-5">
           <h2 className="font-bold text-[14px] tracking-tight mb-4">Order Summary</h2>
           <div className="space-y-3">
             {items.map((item) => (
@@ -114,7 +114,7 @@ export default function CheckoutPage() {
                 <span className="text-[13px] font-medium">₹{(item.price * item.quantity).toFixed(0)}</span>
               </div>
             ))}
-            <hr className="border-black/[0.04]" />
+            <hr className="border-black/4" />
             <div className="flex items-center justify-between font-bold text-[16px]">
               <span>Total</span>
               <span>₹{totalAmount.toFixed(0)}</span>
@@ -123,7 +123,7 @@ export default function CheckoutPage() {
         </div>
 
         {/* Delivery details */}
-        <div className="rounded-2xl bg-white border border-black/[0.04] p-5 space-y-4">
+        <div className="rounded-2xl bg-white border border-black/4 p-5 space-y-4">
           <h2 className="font-bold text-[14px] tracking-tight">Delivery Details</h2>
           <div>
             <label className="block text-[12px] font-medium text-foreground/35 mb-1.5">Room Number *</label>

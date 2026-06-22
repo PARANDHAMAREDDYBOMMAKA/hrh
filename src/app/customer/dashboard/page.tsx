@@ -3,7 +3,7 @@
 import { useSession } from "next-auth/react";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
-import { ShoppingBag, Clock, Package, ArrowUpRight, User, Mail, Phone } from "lucide-react";
+import { ShoppingBag, Clock, Package, ArrowUpRight, Mail, Phone } from "lucide-react";
 
 interface OrderItem { name: string; quantity: number; price: number }
 
@@ -50,7 +50,7 @@ export default function CustomerDashboard() {
     <div className="space-y-5">
       {/* User profile card */}
       <div className="p-5 rounded-2xl bg-foreground text-background relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-36 h-36 bg-white/[0.03] rounded-full -translate-y-1/3 translate-x-1/3" />
+        <div className="absolute top-0 right-0 w-36 h-36 bg-white/3 rounded-full -translate-y-1/3 translate-x-1/3" />
         <div className="relative flex items-start gap-4">
           <div className="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center shrink-0 text-[18px] font-bold">
             {(profile?.name || session?.user?.name || "U")[0].toUpperCase()}
@@ -87,7 +87,7 @@ export default function CustomerDashboard() {
           { icon: Clock, value: activeOrders.length, label: "Active", iconBg: "bg-blue-500" },
           { icon: Package, value: deliveredCount, label: "Delivered", iconBg: "bg-emerald-500" },
         ].map((stat) => (
-          <div key={stat.label} className="p-4 rounded-2xl bg-white border border-black/[0.04] text-center">
+          <div key={stat.label} className="p-4 rounded-2xl bg-white border border-black/4 text-center">
             <div className={`w-8 h-8 mx-auto rounded-lg ${stat.iconBg} flex items-center justify-center mb-2`}>
               <stat.icon className="w-3.5 h-3.5 text-white" />
             </div>
@@ -99,7 +99,7 @@ export default function CustomerDashboard() {
 
       {/* Total spent */}
       {totalSpent > 0 && (
-        <div className="p-4 rounded-2xl bg-white border border-black/[0.04] flex items-center justify-between">
+        <div className="p-4 rounded-2xl bg-white border border-black/4 flex items-center justify-between">
           <span className="text-[13px] text-foreground/40">Total spent</span>
           <span className="text-[16px] font-bold tracking-tight">₹{totalSpent.toLocaleString()}</span>
         </div>
@@ -112,7 +112,7 @@ export default function CustomerDashboard() {
           {activeOrders.slice(0, 3).map((order) => {
             const config = statusConfig[order.status] || statusConfig.PENDING;
             return (
-              <div key={order.id} className="p-4 rounded-2xl bg-white border border-black/[0.04]">
+              <div key={order.id} className="p-4 rounded-2xl bg-white border border-black/4">
                 <div className="flex items-center justify-between mb-1.5">
                   <div className="flex items-center gap-2">
                     <span className={`inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-md font-medium ${config.bg}`}>
@@ -126,7 +126,7 @@ export default function CustomerDashboard() {
                 <div className="text-[13px] text-foreground/35">{order.partner?.name} &middot; Room {order.roomNumber}</div>
                 <div className="flex flex-wrap gap-1 mt-1.5">
                   {(order.items as OrderItem[]).slice(0, 4).map((item, j) => (
-                    <span key={j} className="text-[10px] px-2 py-0.5 rounded bg-black/[0.03] text-foreground/30 font-medium">{item.quantity}x {item.name}</span>
+                    <span key={j} className="text-[10px] px-2 py-0.5 rounded bg-black/3 text-foreground/30 font-medium">{item.quantity}x {item.name}</span>
                   ))}
                 </div>
               </div>
@@ -149,7 +149,7 @@ export default function CustomerDashboard() {
         {isLoading ? (
           <div className="space-y-2.5">{Array.from({ length: 3 }).map((_, i) => <div key={i} className="h-16 rounded-2xl bg-white animate-pulse" />)}</div>
         ) : recentOrders.length === 0 ? (
-          <div className="text-center py-14 rounded-2xl bg-white border border-black/[0.04]">
+          <div className="text-center py-14 rounded-2xl bg-white border border-black/4">
             <ShoppingBag className="w-8 h-8 mx-auto text-foreground/10 mb-3" />
             <p className="text-foreground/25 text-[13px] font-medium">No orders yet</p>
             <p className="text-foreground/15 text-[11px] mt-1">Scan a QR code at your hostel to get started</p>
@@ -159,7 +159,7 @@ export default function CustomerDashboard() {
             {recentOrders.map((order) => {
               const config = statusConfig[order.status] || statusConfig.PENDING;
               return (
-                <div key={order.id} className="flex items-center justify-between p-3.5 rounded-xl bg-white border border-black/[0.04] hover:border-black/[0.08] transition-colors duration-200">
+                <div key={order.id} className="flex items-center justify-between p-3.5 rounded-xl bg-white border border-black/4 hover:border-black/8 transition-colors duration-200">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
                       <span className="text-[13px] font-medium text-foreground/60 truncate">{order.partner?.name}</span>

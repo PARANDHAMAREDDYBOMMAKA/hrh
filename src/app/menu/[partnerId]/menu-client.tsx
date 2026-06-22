@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useCart } from "@/hooks/use-cart";
 import Link from "next/link";
 import { ShoppingCart, Plus, Minus, Circle, Clock, X, UtensilsCrossed } from "lucide-react";
+import Image from "next/image";
 import { Logo } from "@/components/logo";
 
 interface MenuItem {
@@ -70,7 +71,7 @@ export default function MenuClient({
   return (
     <div className="min-h-screen relative bg-[#fafaf9]">
       {/* Header */}
-      <header className="sticky top-0 z-30 bg-white/80 backdrop-blur-2xl border-b border-black/[0.04] px-4 py-3.5">
+      <header className="sticky top-0 z-30 bg-white/80 backdrop-blur-2xl border-b border-black/4 px-4 py-3.5">
         <div className="max-w-2xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Logo size="sm" />
@@ -85,7 +86,7 @@ export default function MenuClient({
               className="relative p-2.5 rounded-xl bg-foreground text-background"
             >
               <ShoppingCart className="w-4 h-4" />
-              <span className="absolute -top-1 -right-1 w-4.5 h-4.5 rounded-full bg-orange-500 text-white text-[10px] font-bold flex items-center justify-center min-w-[18px] h-[18px]">
+              <span className="absolute -top-1 -right-1 w-4.5 h-4.5 rounded-full bg-orange-500 text-white text-[10px] font-bold flex items-center justify-center min-w-4.5">
                 {totalItems}
               </span>
             </button>
@@ -95,7 +96,7 @@ export default function MenuClient({
 
       <div className="max-w-2xl mx-auto px-4 py-5 pb-32">
         {/* Slot tabs */}
-        <div className="flex gap-1.5 p-1 bg-white rounded-xl border border-black/[0.04] mb-5">
+        <div className="flex gap-1.5 p-1 bg-white rounded-xl border border-black/4 mb-5">
           {(["BREAKFAST", "DINNER"] as const).map((slot) => (
             <button
               key={slot}
@@ -144,11 +145,11 @@ export default function MenuClient({
                 <div
                   key={item.id}
                   onClick={() => setSelectedItem(item)}
-                  className="flex items-center justify-between p-4 rounded-2xl bg-white border border-black/[0.04] hover:border-black/[0.08] transition-colors duration-300 cursor-pointer"
+                  className="flex items-center justify-between p-4 rounded-2xl bg-white border border-black/4 hover:border-black/8 transition-colors duration-300 cursor-pointer"
                 >
                   <div className="flex items-start gap-3 flex-1 min-w-0">
                     {item.imageUrl ? (
-                      <img src={item.imageUrl} alt={item.name} className="w-14 h-14 rounded-xl object-cover shrink-0" />
+                      <Image src={item.imageUrl} alt={item.name} width={56} height={56} className="w-14 h-14 rounded-xl object-cover shrink-0" />
                     ) : null}
                     <Circle className={`w-3.5 h-3.5 mt-0.5 shrink-0 ${item.isVeg ? "text-emerald-500" : "text-red-500"}`} fill="currentColor" />
                     <div className="min-w-0">
@@ -171,7 +172,7 @@ export default function MenuClient({
                         <button onClick={() => updateQuantity(item.id, qty - 1)} className="text-background p-0.5">
                           <Minus className="w-3.5 h-3.5" />
                         </button>
-                        <span className="text-background font-bold text-[12px] min-w-[16px] text-center">{qty}</span>
+                        <span className="text-background font-bold text-[12px] min-w-4 text-center">{qty}</span>
                         <button onClick={() => updateQuantity(item.id, qty + 1)} className="text-background p-0.5">
                           <Plus className="w-3.5 h-3.5" />
                         </button>
@@ -187,7 +188,7 @@ export default function MenuClient({
 
       {/* Bottom cart bar */}
       {totalItems > 0 && (
-        <div className="fixed bottom-0 left-0 right-0 p-4 bg-white/80 backdrop-blur-2xl border-t border-black/[0.04] z-20">
+        <div className="fixed bottom-0 left-0 right-0 p-4 bg-white/80 backdrop-blur-2xl border-t border-black/4 z-20">
           <div className="max-w-2xl mx-auto">
             <button
               onClick={() => setShowCart(true)}
@@ -207,9 +208,9 @@ export default function MenuClient({
       {showCart && (
         <div className="fixed inset-0 bg-black/30 backdrop-blur-[2px] z-50 flex items-end justify-center" onClick={() => setShowCart(false)}>
           <div className="bg-white w-full max-w-2xl rounded-t-3xl max-h-[80vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
-            <div className="p-5 border-b border-black/[0.04] flex items-center justify-between sticky top-0 bg-white rounded-t-3xl">
+            <div className="p-5 border-b border-black/4 flex items-center justify-between sticky top-0 bg-white rounded-t-3xl">
               <h3 className="font-bold text-[15px] tracking-tight">Your Cart</h3>
-              <button onClick={() => setShowCart(false)} className="p-2 rounded-lg hover:bg-black/[0.03] text-foreground/30 hover:text-foreground transition-colors">
+              <button onClick={() => setShowCart(false)} className="p-2 rounded-lg hover:bg-black/3 text-foreground/30 hover:text-foreground transition-colors">
                 <X className="w-4 h-4" />
               </button>
             </div>
@@ -224,11 +225,11 @@ export default function MenuClient({
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
-                    <div className="flex items-center gap-2 bg-black/[0.03] rounded-lg px-2 py-1">
+                    <div className="flex items-center gap-2 bg-black/3 rounded-lg px-2 py-1">
                       <button onClick={() => updateQuantity(item.id, item.quantity - 1)} className="p-0.5 text-foreground/40 hover:text-foreground">
                         <Minus className="w-3 h-3" />
                       </button>
-                      <span className="text-[12px] font-bold min-w-[14px] text-center">{item.quantity}</span>
+                      <span className="text-[12px] font-bold min-w-3.5 text-center">{item.quantity}</span>
                       <button onClick={() => updateQuantity(item.id, item.quantity + 1)} className="p-0.5 text-foreground/40 hover:text-foreground">
                         <Plus className="w-3 h-3" />
                       </button>
@@ -237,7 +238,7 @@ export default function MenuClient({
                   </div>
                 </div>
               ))}
-              <hr className="border-black/[0.04]" />
+              <hr className="border-black/4" />
               <div className="flex items-center justify-between text-[16px] font-bold">
                 <span>Total</span>
                 <span>₹{totalAmount.toFixed(0)}</span>
@@ -258,7 +259,9 @@ export default function MenuClient({
         <div className="fixed inset-0 bg-black/30 backdrop-blur-[2px] z-50 flex items-end sm:items-center justify-center" onClick={() => setSelectedItem(null)}>
           <div className="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl max-h-[85vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
             {selectedItem.imageUrl ? (
-              <img src={selectedItem.imageUrl} alt={selectedItem.name} className="w-full h-52 object-cover rounded-t-3xl" />
+              <div className="relative w-full h-52">
+                <Image src={selectedItem.imageUrl} alt={selectedItem.name} fill sizes="(max-width: 640px) 100vw, 448px" className="object-cover rounded-t-3xl" />
+              </div>
             ) : null}
             <div className="p-5">
               <div className="flex items-start justify-between gap-3">
@@ -269,7 +272,7 @@ export default function MenuClient({
                     <div className="text-[15px] font-bold mt-0.5 text-foreground">₹{selectedItem.price}</div>
                   </div>
                 </div>
-                <button onClick={() => setSelectedItem(null)} className="p-2 rounded-lg hover:bg-black/[0.03] text-foreground/30 hover:text-foreground transition-colors shrink-0">
+                <button onClick={() => setSelectedItem(null)} className="p-2 rounded-lg hover:bg-black/3 text-foreground/30 hover:text-foreground transition-colors shrink-0">
                   <X className="w-4 h-4" />
                 </button>
               </div>

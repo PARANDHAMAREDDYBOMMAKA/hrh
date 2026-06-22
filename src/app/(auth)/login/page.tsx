@@ -95,7 +95,7 @@ function AuthPage() {
         </motion.div>
 
         {/* ── Desktop ── */}
-        <div className="hidden md:block w-full max-w-[880px]">
+        <div className="hidden md:block w-full max-w-220">
           <motion.div
             initial={{ opacity: 0, scale: 0.97 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -103,10 +103,10 @@ function AuthPage() {
             className="relative rounded-[1.75rem] overflow-hidden bg-white shadow-[0_4px_40px_rgba(0,0,0,0.06)]"
             style={{ minHeight: 540 }}
           >
-            <div className="flex min-h-[540px]">
+            <div className="flex min-h-135">
               {/* Left half — always Login */}
               <div className="w-1/2 flex items-center justify-center p-10">
-                <form onSubmit={doLogin} className="w-full max-w-[300px] space-y-4">
+                <form onSubmit={doLogin} className="w-full max-w-75 space-y-4">
                   <div>
                     <h1 className="text-[1.6rem] font-bold tracking-tight text-foreground leading-tight">Sign In</h1>
                     <p className="text-foreground/30 text-[13px] mt-1">Enter your credentials</p>
@@ -134,7 +134,7 @@ function AuthPage() {
 
               {/* Right half — always Register */}
               <div className="w-1/2 flex items-center justify-center p-10">
-                <form onSubmit={doRegister} className="w-full max-w-[300px] space-y-3">
+                <form onSubmit={doRegister} className="w-full max-w-75 space-y-3">
                   <div>
                     <h1 className="text-[1.6rem] font-bold tracking-tight text-foreground leading-tight">Create Account</h1>
                     <p className="text-foreground/30 text-[13px] mt-1">Start ordering in seconds</p>
@@ -177,13 +177,13 @@ function AuthPage() {
               transition={{ duration: 0.65, ease }}
             >
               <div className="w-full h-full bg-[#1a1a1a] flex items-center justify-center text-center px-12 relative overflow-hidden">
-                <div className="absolute top-8 right-8 w-28 h-28 border border-white/[0.04] rounded-full" />
-                <div className="absolute bottom-8 left-8 w-20 h-20 border border-white/[0.04] rounded-full" />
+                <div className="absolute top-8 right-8 w-28 h-28 border border-white/4 rounded-full" />
+                <div className="absolute bottom-8 left-8 w-20 h-20 border border-white/4 rounded-full" />
                 <AnimatePresence mode="wait">
                   {isLogin ? (
                     <motion.div key="ov-reg" initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }} transition={{ duration: 0.4, ease }}>
                       <h2 className="text-2xl font-bold text-white tracking-tight mb-2">New here?</h2>
-                      <p className="text-white/30 text-[13px] mb-7 leading-relaxed max-w-[200px] mx-auto">Create an account and start ordering from your hostel</p>
+                      <p className="text-white/30 text-[13px] mb-7 leading-relaxed max-w-50 mx-auto">Create an account and start ordering from your hostel</p>
                       <button type="button" onClick={() => setMode("register")} className="group inline-flex items-center gap-2 px-6 py-3 rounded-full border border-white/15 text-white text-[13px] font-medium hover:bg-white/10 transition-all duration-400">
                         Sign Up <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
                       </button>
@@ -191,7 +191,7 @@ function AuthPage() {
                   ) : (
                     <motion.div key="ov-log" initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 30 }} transition={{ duration: 0.4, ease }}>
                       <h2 className="text-2xl font-bold text-white tracking-tight mb-2">Welcome back</h2>
-                      <p className="text-white/30 text-[13px] mb-7 leading-relaxed max-w-[200px] mx-auto">Sign in to continue ordering your meals</p>
+                      <p className="text-white/30 text-[13px] mb-7 leading-relaxed max-w-50 mx-auto">Sign in to continue ordering your meals</p>
                       <button type="button" onClick={() => setMode("login")} className="group inline-flex items-center gap-2 px-6 py-3 rounded-full border border-white/15 text-white text-[13px] font-medium hover:bg-white/10 transition-all duration-400">
                         Sign In <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
                       </button>
@@ -204,7 +204,7 @@ function AuthPage() {
         </div>
 
         {/* ── Mobile ── */}
-        <div className="md:hidden w-full max-w-[400px]">
+        <div className="md:hidden w-full max-w-100">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease }} className="bg-white rounded-2xl shadow-[0_4px_40px_rgba(0,0,0,0.06)] p-6">
             <div className="flex gap-1 p-1 bg-[#f5f5f4] rounded-xl mb-5">
               {(["login", "register"] as const).map((m) => (

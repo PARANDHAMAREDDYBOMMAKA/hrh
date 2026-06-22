@@ -36,7 +36,7 @@ export default function PartnerLayout({ children }: { children: React.ReactNode 
 
   return (
     <div className="min-h-screen flex bg-[#fafaf9]">
-      <aside className={`fixed inset-y-0 left-0 z-50 w-[260px] bg-white border-r border-black/[0.04] transform transition-transform duration-500 ease-[cubic-bezier(0.25,1,0.5,1)] lg:translate-x-0 ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}`}>
+      <aside className={`fixed inset-y-0 left-0 z-50 w-65 bg-white border-r border-black/4 transform transition-transform duration-500 ease-[cubic-bezier(0.25,1,0.5,1)] lg:translate-x-0 ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}`}>
         <div className="p-7 pb-5">
           <Link href="/partner/dashboard" className="flex items-center gap-2.5 group">
             <Logo size="sm" />
@@ -52,7 +52,7 @@ export default function PartnerLayout({ children }: { children: React.ReactNode 
             const isActive = pathname.startsWith(item.href);
             return (
               <Link key={item.href} href={item.href} onClick={() => setSidebarOpen(false)}
-                className={`group flex items-center gap-3 px-3.5 py-3 rounded-xl text-[13px] transition-all duration-300 ${isActive ? "bg-foreground text-background font-semibold" : "text-foreground/40 hover:text-foreground hover:bg-black/[0.03] font-medium"}`}>
+                className={`group flex items-center gap-3 px-3.5 py-3 rounded-xl text-[13px] transition-all duration-300 ${isActive ? "bg-foreground text-background font-semibold" : "text-foreground/40 hover:text-foreground hover:bg-black/3 font-medium"}`}>
                 <item.icon className="w-[17px] h-[17px]" />
                 {item.label}
                 {isActive && <ChevronRight className="w-3.5 h-3.5 ml-auto opacity-50" />}
@@ -62,7 +62,7 @@ export default function PartnerLayout({ children }: { children: React.ReactNode 
         </nav>
 
         <div className="absolute bottom-0 left-0 right-0 p-4">
-          <div className="p-3.5 rounded-xl bg-black/[0.02] mb-2">
+          <div className="p-3.5 rounded-xl bg-black/2 mb-2">
             <div className="text-[13px] font-semibold text-foreground truncate">{session.user.name}</div>
             <div className="text-[11px] text-foreground/30 truncate mt-0.5">{session.user.email}</div>
           </div>

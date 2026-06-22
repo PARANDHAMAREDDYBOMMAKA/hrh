@@ -4,6 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Plus, Utensils, Trash2, X, Circle, Pencil } from "lucide-react";
+import Image from "next/image";
 import { ConfirmDialog } from "@/components/confirm-dialog";
 
 interface MenuItem {
@@ -195,9 +196,11 @@ export default function MenusPage() {
             >
               <div className="flex items-center gap-4">
                 {item.imageUrl && (
-                  <img
+                  <Image
                     src={item.imageUrl}
                     alt={item.name}
+                    width={48}
+                    height={48}
                     className="w-12 h-12 rounded-xl object-cover shrink-0"
                   />
                 )}
@@ -319,9 +322,11 @@ export default function MenusPage() {
                 </label>
                 <div className="flex items-center gap-3">
                   {form.imageUrl && (
-                    <img
+                    <Image
                       src={form.imageUrl}
                       alt="preview"
+                      width={56}
+                      height={56}
                       className="w-14 h-14 rounded-xl object-cover shrink-0"
                     />
                   )}

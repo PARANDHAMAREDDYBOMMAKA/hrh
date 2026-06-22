@@ -1,6 +1,6 @@
 "use client";
 
-import { AlertTriangle, X } from "lucide-react";
+import { AlertTriangle } from "lucide-react";
 
 interface ConfirmDialogProps {
   open: boolean;
@@ -15,7 +15,7 @@ export function ConfirmDialog({ open, title, message, confirmLabel = "Delete", o
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/40 z-[60] flex items-center justify-center p-4">
+    <div className="fixed inset-0 bg-black/40 z-60 flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl border border-border w-full max-w-sm shadow-2xl animate-scale-in">
         <div className="p-6 text-center">
           <div className="w-14 h-14 rounded-full bg-red-50 border border-red-200 flex items-center justify-center mx-auto mb-4">

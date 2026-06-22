@@ -149,9 +149,9 @@ export function InvoiceModal({ orderId, onClose }: { orderId: string; onClose: (
   return (
     <div className="fixed inset-0 bg-black/30 backdrop-blur-[2px] z-50 flex items-end sm:items-center justify-center p-0 sm:p-4" onClick={onClose}>
       <div className="bg-white w-full max-w-lg rounded-t-3xl sm:rounded-3xl max-h-[88vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
-        <div className="p-5 border-b border-black/[0.04] flex items-center justify-between sticky top-0 bg-white rounded-t-3xl">
+        <div className="p-5 border-b border-black/4 flex items-center justify-between sticky top-0 bg-white rounded-t-3xl">
           <h3 className="font-bold text-[15px] tracking-tight">Invoice</h3>
-          <button onClick={onClose} className="p-2 rounded-lg hover:bg-black/[0.03] text-foreground/30 hover:text-foreground transition-colors">
+          <button onClick={onClose} className="p-2 rounded-lg hover:bg-black/3 text-foreground/30 hover:text-foreground transition-colors">
             <X className="w-4 h-4" />
           </button>
         </div>
@@ -188,14 +188,14 @@ export function InvoiceModal({ orderId, onClose }: { orderId: string; onClose: (
               </div>
             </div>
 
-            <div className="mt-5 border-t border-black/[0.06]">
-              <div className="flex text-[10px] uppercase tracking-wider text-foreground/40 font-semibold py-2 border-b border-black/[0.04]">
+            <div className="mt-5 border-t border-black/6">
+              <div className="flex text-[10px] uppercase tracking-wider text-foreground/40 font-semibold py-2 border-b border-black/4">
                 <span className="flex-1">Item</span>
                 <span className="w-10 text-right">Qty</span>
                 <span className="w-20 text-right">Amount</span>
               </div>
               {order.items.map((item, i) => (
-                <div key={i} className="flex text-[13px] py-2.5 border-b border-black/[0.03]">
+                <div key={i} className="flex text-[13px] py-2.5 border-b border-black/3">
                   <span className="flex-1 text-foreground/70">{item.name}</span>
                   <span className="w-10 text-right text-foreground/40">{item.quantity}</span>
                   <span className="w-20 text-right font-medium">₹{lineSubtotal(item).toFixed(2)}</span>

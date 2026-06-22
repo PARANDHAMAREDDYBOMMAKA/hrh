@@ -47,13 +47,13 @@ function VerifyForm() {
 
   return (
     <div className="min-h-screen flex items-center justify-center relative overflow-hidden">
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-orange-50/30 via-white to-white" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,var(--tw-gradient-stops))] from-orange-50/30 via-white to-white" />
 
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.7, ease }}
-        className="relative z-10 w-full max-w-[420px] px-6"
+        className="relative z-10 w-full max-w-105 px-6"
       >
         {/* Brand */}
         <div className="text-center mb-10">

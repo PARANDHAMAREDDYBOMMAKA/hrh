@@ -2,6 +2,18 @@
 
 import { createContext, useContext, useState, useEffect, useCallback } from "react";
 
+function loadCart(): { items: CartItem[]; partnerId: string | null } {
+  if (typeof window === "undefined") return { items: [], partnerId: null };
+  try {
+    const saved = localStorage.getItem("hrh-cart");
+    if (!saved) return { items: [], partnerId: null };
+    const parsed = JSON.parse(saved);
+    return { items: parsed.items || [], partnerId: parsed.partnerId || null };
+  } catch {
+    return { items: [], partnerId: null };
+  }
+}
+
 interface CartItem {
   id: string;
   name: string;
@@ -25,17 +37,8 @@ interface CartContextType {
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
-  const [items, setItems] = useState<CartItem[]>([]);
-  const [partnerId, setPartnerIdState] = useState<string | null>(null);
-
-  useEffect(() => {
-    const saved = localStorage.getItem("hrh-cart");
-    if (saved) {
-      const parsed = JSON.parse(saved);
-      setItems(parsed.items || []);
-      setPartnerIdState(parsed.partnerId || null);
-    }
-  }, []);
+  const [items, setItems] = useState<CartItem[]>(() => loadCart().items);
+  const [partnerId, setPartnerIdState] = useState<string | null>(() => loadCart().partnerId);
 
   useEffect(() => {
     localStorage.setItem("hrh-cart", JSON.stringify({ items, partnerId }));

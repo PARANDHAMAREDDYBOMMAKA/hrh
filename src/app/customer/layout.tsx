@@ -34,7 +34,7 @@ export default function CustomerLayout({ children }: { children: React.ReactNode
 
   return (
     <div className="min-h-screen bg-[#fafaf9] pb-20">
-      <header className="sticky top-0 z-30 bg-white/80 backdrop-blur-2xl border-b border-black/[0.04]">
+      <header className="sticky top-0 z-30 bg-white/80 backdrop-blur-2xl border-b border-black/4">
         <div className="max-w-2xl mx-auto px-5 py-3.5 flex items-center justify-between">
           <Link href="/customer/dashboard" className="flex items-center gap-2">
             <Logo size="sm" />
@@ -51,7 +51,7 @@ export default function CustomerLayout({ children }: { children: React.ReactNode
 
       <main className="max-w-2xl mx-auto px-5 py-6">{children}</main>
 
-      <nav className="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-2xl border-t border-black/[0.04] z-30">
+      <nav className="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-2xl border-t border-black/4 z-30">
         <div className="max-w-2xl mx-auto flex items-center justify-around py-2.5">
           {navItems.map((item) => {
             const isActive = pathname.startsWith(item.href);

@@ -71,7 +71,7 @@ export default function PartnerOrdersPage() {
       </div>
 
       {/* Filter tabs */}
-      <div className="flex gap-1.5 p-1 bg-white rounded-xl border border-black/[0.04] w-fit">
+      <div className="flex gap-1.5 p-1 bg-white rounded-xl border border-black/4 w-fit">
         {filterTabs.map((tab) => (
           <button
             key={tab.key}
@@ -89,7 +89,7 @@ export default function PartnerOrdersPage() {
       </div>
 
       {filtered.length === 0 ? (
-        <div className="text-center py-16 rounded-2xl bg-white border border-black/[0.04]">
+        <div className="text-center py-16 rounded-2xl bg-white border border-black/4">
           <ShoppingBag className="w-8 h-8 mx-auto text-foreground/10 mb-3" />
           <p className="text-foreground/25 text-[13px] font-medium">No {filter !== "all" ? filter : ""} orders</p>
         </div>
@@ -101,7 +101,7 @@ export default function PartnerOrdersPage() {
             const currentIdx = statusFlow.indexOf(order.status);
 
             return (
-              <div key={order.id} className="rounded-2xl bg-white border border-black/[0.04] hover:border-black/[0.08] transition-colors duration-300 overflow-hidden">
+              <div key={order.id} className="rounded-2xl bg-white border border-black/4 hover:border-black/8 transition-colors duration-300 overflow-hidden">
                 <div className="p-5">
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1 min-w-0">
@@ -117,7 +117,7 @@ export default function PartnerOrdersPage() {
                       </div>
                       <div className="mt-2 flex flex-wrap gap-1">
                         {(order.items as OrderItem[]).map((item, i) => (
-                          <span key={i} className="text-[10px] px-2 py-0.5 rounded bg-black/[0.03] text-foreground/35 font-medium">{item.quantity}x {item.name}</span>
+                          <span key={i} className="text-[10px] px-2 py-0.5 rounded bg-black/3 text-foreground/35 font-medium">{item.quantity}x {item.name}</span>
                         ))}
                       </div>
                       {order.deliveryNotes && <p className="mt-1.5 text-[11px] text-foreground/25 italic">Note: {order.deliveryNotes}</p>}
@@ -132,15 +132,15 @@ export default function PartnerOrdersPage() {
 
                 {/* Status progress (view only) */}
                 {isActive && (
-                  <div className="px-5 pb-4 pt-1 border-t border-black/[0.03]">
+                  <div className="px-5 pb-4 pt-1 border-t border-black/3">
                     <div className="flex items-center gap-1">
                       {statusFlow.map((s, i) => {
                         const done = i <= currentIdx;
                         const isCurrent = i === currentIdx;
                         return (
                           <div key={s} className="flex items-center gap-1">
-                            <div className={`w-2 h-2 rounded-full transition-colors ${done ? statusStyle[s].bg : "bg-black/[0.06]"} ${isCurrent ? "ring-2 ring-offset-1 ring-black/10" : ""}`} />
-                            {i < statusFlow.length - 1 && <div className={`w-4 h-px ${done && i < currentIdx ? "bg-black/15" : "bg-black/[0.04]"}`} />}
+                            <div className={`w-2 h-2 rounded-full transition-colors ${done ? statusStyle[s].bg : "bg-black/6"} ${isCurrent ? "ring-2 ring-offset-1 ring-black/10" : ""}`} />
+                            {i < statusFlow.length - 1 && <div className={`w-4 h-px ${done && i < currentIdx ? "bg-black/15" : "bg-black/4"}`} />}
                           </div>
                         );
                       })}

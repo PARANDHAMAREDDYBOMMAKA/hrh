@@ -37,7 +37,7 @@ export default function PartnerDashboard() {
         <div className="h-24 rounded-2xl bg-white animate-pulse" />
         <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
           {Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} className="h-[110px] rounded-2xl bg-white animate-pulse" />
+            <div key={i} className="h-27.5 rounded-2xl bg-white animate-pulse" />
           ))}
         </div>
         <div className="h-60 rounded-2xl bg-white animate-pulse" />
@@ -57,7 +57,7 @@ export default function PartnerDashboard() {
     <div className="space-y-6 max-w-5xl">
       {/* Welcome */}
       <div className="p-6 rounded-2xl bg-foreground text-background relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-48 h-48 bg-white/[0.03] rounded-full -translate-y-1/2 translate-x-1/3" />
+        <div className="absolute top-0 right-0 w-48 h-48 bg-white/3 rounded-full -translate-y-1/2 translate-x-1/3" />
         <div className="relative">
           <h1 className="text-xl font-bold tracking-tight">Welcome back, {data?.partnerName || "Partner"}</h1>
           <p className="text-background/40 text-[13px] mt-1">
@@ -69,7 +69,7 @@ export default function PartnerDashboard() {
       {/* Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
         {stats.map((stat) => (
-          <div key={stat.label} className="p-5 rounded-2xl bg-white border border-black/[0.04] hover:border-black/[0.08] transition-colors duration-300">
+          <div key={stat.label} className="p-5 rounded-2xl bg-white border border-black/4 hover:border-black/8 transition-colors duration-300">
             <div className={`w-8 h-8 rounded-lg ${stat.iconBg} flex items-center justify-center mb-3`}>
               <stat.icon className="w-4 h-4 text-white" />
             </div>
@@ -80,7 +80,7 @@ export default function PartnerDashboard() {
       </div>
 
       {/* Active orders */}
-      <div className="rounded-2xl bg-white border border-black/[0.04] overflow-hidden">
+      <div className="rounded-2xl bg-white border border-black/4 overflow-hidden">
         <div className="px-6 py-5 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <div className="w-7 h-7 rounded-lg bg-orange-50 flex items-center justify-center">
@@ -97,7 +97,7 @@ export default function PartnerDashboard() {
         </div>
 
         {activeOrders.length === 0 ? (
-          <div className="p-14 text-center border-t border-black/[0.03]">
+          <div className="p-14 text-center border-t border-black/3">
             <Package className="w-8 h-8 mx-auto text-foreground/10 mb-3" />
             <p className="text-foreground/25 text-[13px] font-medium">No active orders right now</p>
             <p className="text-foreground/15 text-[11px] mt-1">New orders will appear here</p>
@@ -107,7 +107,7 @@ export default function PartnerDashboard() {
             {activeOrders.map((order, i) => {
               const config = statusConfig[order.status] || statusConfig.PENDING;
               return (
-                <div key={order.id} className={`px-6 py-4 hover:bg-black/[0.01] transition-colors duration-200 ${i > 0 ? "border-t border-black/[0.03]" : "border-t border-black/[0.03]"}`}>
+                <div key={order.id} className={`px-6 py-4 hover:bg-black/1 transition-colors duration-200 ${i > 0 ? "border-t border-black/3" : "border-t border-black/3"}`}>
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
@@ -121,7 +121,7 @@ export default function PartnerDashboard() {
                       <div className="mt-1.5 text-[13px] text-foreground/35">{order.customer?.name} &middot; Room {order.roomNumber}</div>
                       <div className="mt-1.5 flex flex-wrap gap-1">
                         {(order.items as { name: string; quantity: number }[]).map((item, j) => (
-                          <span key={j} className="text-[10px] px-2 py-0.5 rounded bg-black/[0.03] text-foreground/40 font-medium">{item.quantity}x {item.name}</span>
+                          <span key={j} className="text-[10px] px-2 py-0.5 rounded bg-black/3 text-foreground/40 font-medium">{item.quantity}x {item.name}</span>
                         ))}
                       </div>
                     </div>

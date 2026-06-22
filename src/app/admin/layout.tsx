@@ -80,7 +80,7 @@ export default function AdminLayout({
                 className={`group flex items-center gap-3 px-3.5 py-3 rounded-xl text-[13px] transition-all duration-300 ${
                   isActive
                     ? "bg-foreground text-background font-semibold"
-                    : "text-foreground/40 hover:text-foreground hover:bg-black/[0.03] font-medium"
+                    : "text-foreground/40 hover:text-foreground hover:bg-black/3 font-medium"
                 }`}
               >
                 <item.icon className="w-[17px] h-[17px]" />
@@ -92,7 +92,7 @@ export default function AdminLayout({
         </nav>
 
         <div className="absolute bottom-0 left-0 right-0 p-4">
-          <div className="p-3.5 rounded-xl bg-black/[0.02] mb-2">
+          <div className="p-3.5 rounded-xl bg-black/2 mb-2">
             <div className="text-[13px] font-semibold text-foreground truncate">{session.user.name}</div>
             <div className="text-[11px] text-foreground/30 truncate mt-0.5">{session.user.email}</div>
           </div>

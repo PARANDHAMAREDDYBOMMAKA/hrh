@@ -55,7 +55,7 @@ export default function CustomerOrdersPage() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 p-1 bg-white rounded-xl border border-black/[0.04] w-fit">
+      <div className="flex gap-1 p-1 bg-white rounded-xl border border-black/4 w-fit">
         <button onClick={() => setFilter("active")} className={`px-4 py-2 rounded-lg text-[12px] font-medium transition-all duration-300 ${filter === "active" ? "bg-foreground text-background" : "text-foreground/30"}`}>
           Active {activeOrders.length > 0 && <span className="ml-1 px-1.5 py-0.5 rounded-md bg-orange-500 text-white text-[10px] font-bold">{activeOrders.length}</span>}
         </button>
@@ -65,13 +65,13 @@ export default function CustomerOrdersPage() {
       </div>
 
       {orders.length === 0 ? (
-        <div className="text-center py-16 rounded-2xl bg-white border border-black/[0.04]">
+        <div className="text-center py-16 rounded-2xl bg-white border border-black/4">
           <ShoppingBag className="w-8 h-8 mx-auto text-foreground/10 mb-3" />
           <p className="text-foreground/25 text-[13px] font-medium">No orders yet</p>
           <p className="text-foreground/15 text-[11px] mt-1">Scan a QR code at your hostel to get started</p>
         </div>
       ) : displayed.length === 0 ? (
-        <div className="text-center py-12 rounded-2xl bg-white border border-black/[0.04]">
+        <div className="text-center py-12 rounded-2xl bg-white border border-black/4">
           <p className="text-foreground/25 text-[13px] font-medium">No {filter} orders</p>
         </div>
       ) : (
@@ -82,7 +82,7 @@ export default function CustomerOrdersPage() {
             const currentIdx = statusFlow.indexOf(order.status);
 
             return (
-              <div key={order.id} className="rounded-2xl bg-white border border-black/[0.04] overflow-hidden">
+              <div key={order.id} className="rounded-2xl bg-white border border-black/4 overflow-hidden">
                 <div className="p-4">
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2 flex-wrap">
@@ -97,7 +97,7 @@ export default function CustomerOrdersPage() {
 
                   <div className="flex flex-wrap gap-1 mt-2">
                     {(order.items as OrderItem[]).map((item, i) => (
-                      <span key={i} className="text-[10px] px-2 py-0.5 rounded bg-black/[0.03] text-foreground/30 font-medium">{item.quantity}x {item.name}</span>
+                      <span key={i} className="text-[10px] px-2 py-0.5 rounded bg-black/3 text-foreground/30 font-medium">{item.quantity}x {item.name}</span>
                     ))}
                   </div>
 
@@ -107,7 +107,7 @@ export default function CustomerOrdersPage() {
                     </div>
                     <button
                       onClick={() => setInvoiceOrderId(order.id)}
-                      className="flex items-center gap-1.5 text-[12px] font-semibold text-foreground bg-accent/60 hover:bg-foreground hover:text-background px-3.5 py-1.5 rounded-lg border border-black/[0.06] transition-colors"
+                      className="flex items-center gap-1.5 text-[12px] font-semibold text-foreground bg-accent/60 hover:bg-foreground hover:text-background px-3.5 py-1.5 rounded-lg border border-black/6 transition-colors"
                     >
                       <FileText className="w-3.5 h-3.5" />
                       View Bill
@@ -117,13 +117,13 @@ export default function CustomerOrdersPage() {
 
                 {/* Status progress bar for active orders */}
                 {isActive && (
-                  <div className="px-4 pb-3 pt-1 border-t border-black/[0.03]">
+                  <div className="px-4 pb-3 pt-1 border-t border-black/3">
                     <div className="flex items-center gap-1">
                       {statusFlow.map((s, i) => {
                         const done = i <= currentIdx;
                         return (
                           <div key={s} className="flex items-center gap-1 flex-1">
-                            <div className={`w-full h-1.5 rounded-full transition-colors ${done ? statusStyle[s].bg : "bg-black/[0.04]"}`} />
+                            <div className={`w-full h-1.5 rounded-full transition-colors ${done ? statusStyle[s].bg : "bg-black/4"}`} />
                           </div>
                         );
                       })}

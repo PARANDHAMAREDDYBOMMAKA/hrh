@@ -33,7 +33,7 @@ export default function AdminDashboard() {
       <div className="space-y-6 max-w-6xl">
         <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
           {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="h-[120px] rounded-2xl bg-white animate-pulse" />
+            <div key={i} className="h-30 rounded-2xl bg-white animate-pulse" />
           ))}
         </div>
         <div className="h-64 rounded-2xl bg-white animate-pulse" />
@@ -55,7 +55,7 @@ export default function AdminDashboard() {
       {/* Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 lg:gap-4">
         {stats.map((stat) => (
-          <div key={stat.label} className="p-5 rounded-2xl bg-white border border-black/[0.04] hover:border-black/[0.08] transition-colors duration-300">
+          <div key={stat.label} className="p-5 rounded-2xl bg-white border border-black/4 hover:border-black/8 transition-colors duration-300">
             <div className="flex items-start justify-between">
               <div>
                 <p className="text-[12px] text-foreground/35 font-medium">{stat.label}</p>
@@ -70,7 +70,7 @@ export default function AdminDashboard() {
       </div>
 
       {/* Recent orders */}
-      <div className="rounded-2xl bg-white border border-black/[0.04] overflow-hidden">
+      <div className="rounded-2xl bg-white border border-black/4 overflow-hidden">
         <div className="px-6 py-5 flex items-center justify-between">
           <h2 className="text-[15px] font-semibold text-foreground tracking-tight">Recent Orders</h2>
           <Link href="/admin/orders" className="text-[13px] text-orange-500 hover:text-orange-600 font-medium flex items-center gap-1 transition-colors">
@@ -80,7 +80,7 @@ export default function AdminDashboard() {
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="text-left text-[11px] text-foreground/25 font-semibold uppercase tracking-wider border-t border-black/[0.04]">
+              <tr className="text-left text-[11px] text-foreground/25 font-semibold uppercase tracking-wider border-t border-black/4">
                 <th className="px-6 py-3">Order</th>
                 <th className="px-4 py-3">Customer</th>
                 <th className="px-4 py-3">Partner</th>
@@ -94,7 +94,7 @@ export default function AdminDashboard() {
                 (order: { id: string; orderNumber: string; customer: { name: string }; partner: { name: string }; deliverySlot: string; totalAmount: number; status: string }) => {
                   const config = statusConfig[order.status] || statusConfig.PENDING;
                   return (
-                    <tr key={order.id} className="border-t border-black/[0.03] hover:bg-black/[0.01] transition-colors duration-200">
+                    <tr key={order.id} className="border-t border-black/3 hover:bg-black/1 transition-colors duration-200">
                       <td className="px-6 py-3.5 text-[13px] font-mono font-medium text-foreground/50">#{order.orderNumber?.slice(-6)}</td>
                       <td className="px-4 py-3.5 text-[13px] text-foreground/60">{order.customer?.name}</td>
                       <td className="px-4 py-3.5 text-[13px] text-foreground/60">{order.partner?.name}</td>
