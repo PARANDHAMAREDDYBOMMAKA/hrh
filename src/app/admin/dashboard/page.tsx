@@ -44,7 +44,7 @@ export default function AdminDashboard() {
   const stats = [
     { label: "Total Orders", value: data?.totalOrders || 0, icon: ShoppingBag, iconBg: "bg-orange-500", iconColor: "text-white" },
     { label: "Today's Orders", value: data?.todayOrders || 0, icon: Clock, iconBg: "bg-blue-500", iconColor: "text-white" },
-    { label: "Monthly Revenue", value: `₹${(data?.monthlyRevenue || 0).toLocaleString()}`, icon: IndianRupee, iconBg: "bg-emerald-500", iconColor: "text-white" },
+    { label: "Monthly Revenue", value: `₹${Math.max(0, (data?.monthlyRevenue || 0) - (data?.monthlyCommission || 0)).toLocaleString()}`, icon: IndianRupee, iconBg: "bg-emerald-500", iconColor: "text-white" },
     { label: "Commissions", value: `₹${(data?.monthlyCommission || 0).toLocaleString()}`, icon: TrendingUp, iconBg: "bg-violet-500", iconColor: "text-white" },
     { label: "Active Partners", value: `${data?.activePartners || 0}/${data?.totalPartners || 0}`, icon: Building2, iconBg: "bg-pink-500", iconColor: "text-white" },
     { label: "Customers", value: data?.totalCustomers || 0, icon: Users, iconBg: "bg-indigo-500", iconColor: "text-white" },

@@ -12,6 +12,7 @@ interface MenuItem {
   description: string | null;
   price: number;
   isVeg: boolean;
+  imageUrl: string | null;
 }
 
 interface TimeSlot {
@@ -40,6 +41,7 @@ export default function MenuClient({
   const { items: cartItems, addItem, updateQuantity, totalItems, totalAmount, setPartnerId } = useCart();
   const [activeSlot, setActiveSlot] = useState<string>("BREAKFAST");
   const [showCart, setShowCart] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null);
   const [now, setNow] = useState(new Date());
 
   useEffect(() => {
@@ -139,16 +141,23 @@ export default function MenuClient({
             {currentItems.map((item) => {
               const qty = getCartQuantity(item.id);
               return (
-                <div key={item.id} className="flex items-center justify-between p-4 rounded-2xl bg-white border border-black/[0.04] hover:border-black/[0.08] transition-colors duration-300">
+                <div
+                  key={item.id}
+                  onClick={() => setSelectedItem(item)}
+                  className="flex items-center justify-between p-4 rounded-2xl bg-white border border-black/[0.04] hover:border-black/[0.08] transition-colors duration-300 cursor-pointer"
+                >
                   <div className="flex items-start gap-3 flex-1 min-w-0">
+                    {item.imageUrl ? (
+                      <img src={item.imageUrl} alt={item.name} className="w-14 h-14 rounded-xl object-cover shrink-0" />
+                    ) : null}
                     <Circle className={`w-3.5 h-3.5 mt-0.5 shrink-0 ${item.isVeg ? "text-emerald-500" : "text-red-500"}`} fill="currentColor" />
                     <div className="min-w-0">
                       <div className="font-medium text-[13px] text-foreground/80">{item.name}</div>
-                      {item.description && <p className="text-[11px] text-foreground/25 mt-0.5">{item.description}</p>}
+                      {item.description && <p className="text-[11px] text-foreground/25 mt-0.5 line-clamp-1">{item.description}</p>}
                       <div className="text-[13px] font-bold mt-1 text-foreground">₹{item.price}</div>
                     </div>
                   </div>
-                  <div className="ml-4">
+                  <div className="ml-4" onClick={(e) => e.stopPropagation()}>
                     {qty === 0 ? (
                       <button
                         onClick={() => addItem({ id: item.id, name: item.name, price: item.price, isVeg: item.isVeg })}
@@ -240,6 +249,54 @@ export default function MenuClient({
               >
                 Proceed to Checkout
               </Link>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {selectedItem && (
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-[2px] z-50 flex items-end sm:items-center justify-center" onClick={() => setSelectedItem(null)}>
+          <div className="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl max-h-[85vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+            {selectedItem.imageUrl ? (
+              <img src={selectedItem.imageUrl} alt={selectedItem.name} className="w-full h-52 object-cover rounded-t-3xl" />
+            ) : null}
+            <div className="p-5">
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex items-start gap-2.5 min-w-0">
+                  <Circle className={`w-4 h-4 mt-1 shrink-0 ${selectedItem.isVeg ? "text-emerald-500" : "text-red-500"}`} fill="currentColor" />
+                  <div className="min-w-0">
+                    <h3 className="font-bold text-[17px] tracking-tight text-foreground">{selectedItem.name}</h3>
+                    <div className="text-[15px] font-bold mt-0.5 text-foreground">₹{selectedItem.price}</div>
+                  </div>
+                </div>
+                <button onClick={() => setSelectedItem(null)} className="p-2 rounded-lg hover:bg-black/[0.03] text-foreground/30 hover:text-foreground transition-colors shrink-0">
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+              {selectedItem.description && (
+                <p className="text-[13px] text-foreground/45 leading-relaxed mt-3">{selectedItem.description}</p>
+              )}
+              <div className="mt-5">
+                {getCartQuantity(selectedItem.id) === 0 ? (
+                  <button
+                    onClick={() => addItem({ id: selectedItem.id, name: selectedItem.name, price: selectedItem.price, isVeg: selectedItem.isVeg })}
+                    disabled={!orderOpen}
+                    className="w-full py-3.5 rounded-2xl bg-foreground text-background font-semibold text-[14px] hover:opacity-80 transition-opacity disabled:opacity-20 disabled:cursor-not-allowed"
+                  >
+                    {orderOpen ? "Add to Cart" : "Ordering Closed"}
+                  </button>
+                ) : (
+                  <div className="flex items-center justify-between bg-foreground rounded-2xl px-4 py-2.5">
+                    <button onClick={() => updateQuantity(selectedItem.id, getCartQuantity(selectedItem.id) - 1)} className="text-background p-1">
+                      <Minus className="w-4 h-4" />
+                    </button>
+                    <span className="text-background font-bold text-[15px]">{getCartQuantity(selectedItem.id)} in cart</span>
+                    <button onClick={() => updateQuantity(selectedItem.id, getCartQuantity(selectedItem.id) + 1)} className="text-background p-1">
+                      <Plus className="w-4 h-4" />
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>

@@ -28,6 +28,10 @@ export async function POST(req: Request) {
   const session = await getServerSession(authOptions);
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
+  if (session.user.role !== "CUSTOMER") {
+    return NextResponse.json({ error: "Only customers can place orders" }, { status: 403 });
+  }
+
   try {
     const { partnerId, roomNumber, items, deliverySlot, deliveryNotes } = await req.json();
 

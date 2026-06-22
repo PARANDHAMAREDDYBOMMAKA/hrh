@@ -30,7 +30,7 @@ export async function POST(req: Request) {
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   try {
-    const { name, description, price, isVeg, slotType } = await req.json();
+    const { name, description, price, isVeg, slotType, imageUrl } = await req.json();
 
     if (!name || price === undefined || !slotType) {
       return NextResponse.json({ error: "Name, price, and slot type are required" }, { status: 400 });
@@ -53,6 +53,7 @@ export async function POST(req: Request) {
         price: parseFloat(price),
         isVeg: isVeg ?? true,
         slotType,
+        imageUrl: imageUrl || null,
         sortOrder: (maxOrder?.sortOrder ?? -1) + 1,
       },
     });

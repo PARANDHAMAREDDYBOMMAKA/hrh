@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { ShoppingBag, Clock, IndianRupee, TrendingUp, Package, ArrowUpRight } from "lucide-react";
+import { ShoppingBag, Clock, IndianRupee, Package, ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 
 interface ActiveOrder {
@@ -35,8 +35,8 @@ export default function PartnerDashboard() {
     return (
       <div className="space-y-6 max-w-5xl">
         <div className="h-24 rounded-2xl bg-white animate-pulse" />
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-          {Array.from({ length: 4 }).map((_, i) => (
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
+          {Array.from({ length: 3 }).map((_, i) => (
             <div key={i} className="h-[110px] rounded-2xl bg-white animate-pulse" />
           ))}
         </div>
@@ -48,8 +48,7 @@ export default function PartnerDashboard() {
   const stats = [
     { label: "Today's Orders", value: data?.todayOrders || 0, icon: Clock, iconBg: "bg-blue-500" },
     { label: "Total Orders", value: data?.totalOrders || 0, icon: ShoppingBag, iconBg: "bg-orange-500" },
-    { label: "Monthly Revenue", value: `₹${(data?.monthlyRevenue || 0).toLocaleString()}`, icon: IndianRupee, iconBg: "bg-emerald-500" },
-    { label: "Commission", value: `₹${(data?.monthlyCommission || 0).toLocaleString()}`, icon: TrendingUp, iconBg: "bg-violet-500" },
+    { label: "Monthly Revenue", value: `₹${(data?.monthlyCommission || 0).toLocaleString()}`, icon: IndianRupee, iconBg: "bg-emerald-500" },
   ];
 
   const activeOrders: ActiveOrder[] = data?.activeOrders || [];
@@ -68,7 +67,7 @@ export default function PartnerDashboard() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
         {stats.map((stat) => (
           <div key={stat.label} className="p-5 rounded-2xl bg-white border border-black/[0.04] hover:border-black/[0.08] transition-colors duration-300">
             <div className={`w-8 h-8 rounded-lg ${stat.iconBg} flex items-center justify-center mb-3`}>

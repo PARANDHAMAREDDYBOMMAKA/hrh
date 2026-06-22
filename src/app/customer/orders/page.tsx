@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { ShoppingBag } from "lucide-react";
+import { ShoppingBag, FileText } from "lucide-react";
+import { InvoiceModal } from "@/components/invoice-modal";
 
 interface OrderItem { name: string; quantity: number; price: number }
 
@@ -26,6 +27,7 @@ const statusStyle: Record<string, { label: string; bg: string; text: string }> =
 
 export default function CustomerOrdersPage() {
   const [filter, setFilter] = useState<"active" | "past">("active");
+  const [invoiceOrderId, setInvoiceOrderId] = useState<string | null>(null);
 
   const { data: orders = [], isLoading } = useQuery<Order[]>({
     queryKey: ["my-orders"],
@@ -99,8 +101,17 @@ export default function CustomerOrdersPage() {
                     ))}
                   </div>
 
-                  <div className="text-[10px] text-foreground/15 mt-2">
-                    {new Date(order.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" })}
+                  <div className="flex items-center justify-between mt-2">
+                    <div className="text-[10px] text-foreground/15">
+                      {new Date(order.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" })}
+                    </div>
+                    <button
+                      onClick={() => setInvoiceOrderId(order.id)}
+                      className="flex items-center gap-1.5 text-[12px] font-semibold text-foreground bg-accent/60 hover:bg-foreground hover:text-background px-3.5 py-1.5 rounded-lg border border-black/[0.06] transition-colors"
+                    >
+                      <FileText className="w-3.5 h-3.5" />
+                      View Bill
+                    </button>
                   </div>
                 </div>
 
@@ -124,6 +135,10 @@ export default function CustomerOrdersPage() {
             );
           })}
         </div>
+      )}
+
+      {invoiceOrderId && (
+        <InvoiceModal orderId={invoiceOrderId} onClose={() => setInvoiceOrderId(null)} />
       )}
     </div>
   );

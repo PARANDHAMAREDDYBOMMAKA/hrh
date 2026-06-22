@@ -3,7 +3,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
-import { Plus, Utensils, Trash2, X, Circle } from "lucide-react";
+import { Plus, Utensils, Trash2, X, Circle, Pencil } from "lucide-react";
 import { ConfirmDialog } from "@/components/confirm-dialog";
 
 interface MenuItem {
@@ -14,14 +14,59 @@ interface MenuItem {
   isVeg: boolean;
   isAvailable: boolean;
   slotType: string;
+  imageUrl: string | null;
 }
 
 export default function MenusPage() {
   const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState<"BREAKFAST" | "DINNER">("BREAKFAST");
   const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState({ name: "", description: "", price: "", isVeg: true });
+  const [editId, setEditId] = useState<string | null>(null);
+  const [form, setForm] = useState({ name: "", description: "", price: "", isVeg: true, imageUrl: "" });
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
+
+  const resetForm = () => {
+    setShowForm(false);
+    setEditId(null);
+    setForm({ name: "", description: "", price: "", isVeg: true, imageUrl: "" });
+  };
+
+  const openCreate = () => {
+    setEditId(null);
+    setForm({ name: "", description: "", price: "", isVeg: true, imageUrl: "" });
+    setShowForm(true);
+  };
+
+  const openEdit = (item: MenuItem) => {
+    setEditId(item.id);
+    setForm({
+      name: item.name,
+      description: item.description ?? "",
+      price: String(item.price),
+      isVeg: item.isVeg,
+      imageUrl: item.imageUrl ?? "",
+    });
+    setShowForm(true);
+  };
+
+  const handleImageUpload = async (file: File) => {
+    setUploading(true);
+    try {
+      const body = new FormData();
+      body.append("file", file);
+      body.append("prefix", "menu");
+      const r = await fetch("/api/upload", { method: "POST", body });
+      if (!r.ok) throw r;
+      const { url } = await r.json();
+      setForm((p) => ({ ...p, imageUrl: url }));
+      toast.success("Image uploaded");
+    } catch {
+      toast.error("Image upload failed");
+    } finally {
+      setUploading(false);
+    }
+  };
 
   const { data: items = [], isLoading } = useQuery<MenuItem[]>({
     queryKey: ["menu-items", activeTab],
@@ -34,7 +79,7 @@ export default function MenusPage() {
   });
 
   const createItem = useMutation({
-    mutationFn: (data: { name: string; description: string; price: string; isVeg: boolean; slotType: string }) =>
+    mutationFn: (data: { name: string; description: string; price: string; isVeg: boolean; slotType: string; imageUrl: string }) =>
       fetch("/api/admin/menus", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -42,11 +87,25 @@ export default function MenusPage() {
       }).then((r) => { if (!r.ok) throw r; return r.json(); }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["menu-items"] });
-      setShowForm(false);
-      setForm({ name: "", description: "", price: "", isVeg: true });
+      resetForm();
       toast.success("Item added");
     },
     onError: () => toast.error("Failed to add item"),
+  });
+
+  const updateItem = useMutation({
+    mutationFn: ({ id, data }: { id: string; data: { name: string; description: string; price: string; isVeg: boolean; imageUrl: string } }) =>
+      fetch(`/api/admin/menus/items/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...data, description: data.description || null, imageUrl: data.imageUrl || null }),
+      }).then((r) => { if (!r.ok) throw r; return r.json(); }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["menu-items"] });
+      resetForm();
+      toast.success("Item updated");
+    },
+    onError: () => toast.error("Failed to update item"),
   });
 
   const toggleItem = useMutation({
@@ -80,7 +139,7 @@ export default function MenusPage() {
           </p>
         </div>
         <button
-          onClick={() => setShowForm(true)}
+          onClick={openCreate}
           className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-foreground text-background text-sm font-medium btn-smooth hover:opacity-80"
         >
           <Plus className="w-4 h-4" />
@@ -119,7 +178,7 @@ export default function MenusPage() {
             No items in {activeTab.toLowerCase()} menu
           </p>
           <button
-            onClick={() => setShowForm(true)}
+            onClick={openCreate}
             className="mt-5 px-6 py-2.5 rounded-xl bg-foreground text-background text-sm font-medium btn-smooth hover:opacity-80"
           >
             Add your first item
@@ -135,6 +194,13 @@ export default function MenusPage() {
               }`}
             >
               <div className="flex items-center gap-4">
+                {item.imageUrl && (
+                  <img
+                    src={item.imageUrl}
+                    alt={item.name}
+                    className="w-12 h-12 rounded-xl object-cover shrink-0"
+                  />
+                )}
                 <Circle
                   className={`w-4 h-4 shrink-0 ${
                     item.isVeg ? "text-emerald-500" : "text-red-500"
@@ -178,6 +244,12 @@ export default function MenusPage() {
                   {item.isAvailable ? "Available" : "Unavailable"}
                 </button>
                 <button
+                  onClick={() => openEdit(item)}
+                  className="p-2 rounded-lg text-foreground/20 hover:text-foreground hover:bg-accent/40 transition-all duration-400"
+                >
+                  <Pencil className="w-4 h-4" />
+                </button>
+                <button
                   onClick={() => setDeleteTarget(item.id)}
                   className="p-2 rounded-lg text-foreground/20 hover:text-red-500 hover:bg-red-50 transition-all duration-400"
                 >
@@ -195,10 +267,10 @@ export default function MenusPage() {
           <div className="bg-white rounded-3xl w-full max-w-md shadow-soft-lg reveal-scale">
             <div className="p-6 border-b border-border/30 flex items-center justify-between">
               <h3 className="text-lg font-bold tracking-tight">
-                Add {activeTab === "BREAKFAST" ? "Breakfast" : "Dinner"} Item
+                {editId ? "Edit" : "Add"} {activeTab === "BREAKFAST" ? "Breakfast" : "Dinner"} Item
               </h3>
               <button
-                onClick={() => setShowForm(false)}
+                onClick={resetForm}
                 className="text-foreground/25 hover:text-foreground transition-colors duration-400"
               >
                 <X className="w-5 h-5" />
@@ -207,7 +279,14 @@ export default function MenusPage() {
             <form
               onSubmit={(e) => {
                 e.preventDefault();
-                createItem.mutate({ ...form, slotType: activeTab });
+                if (editId) {
+                  updateItem.mutate({
+                    id: editId,
+                    data: { name: form.name, description: form.description, price: form.price, isVeg: form.isVeg, imageUrl: form.imageUrl },
+                  });
+                } else {
+                  createItem.mutate({ ...form, slotType: activeTab });
+                }
               }}
               className="p-6 space-y-4"
             >
@@ -233,6 +312,33 @@ export default function MenusPage() {
                   placeholder="e.g., Crispy dosa with potato filling"
                   className={inputClass}
                 />
+              </div>
+              <div>
+                <label className="block text-[13px] font-medium text-foreground/50 mb-2">
+                  Image (optional)
+                </label>
+                <div className="flex items-center gap-3">
+                  {form.imageUrl && (
+                    <img
+                      src={form.imageUrl}
+                      alt="preview"
+                      className="w-14 h-14 rounded-xl object-cover shrink-0"
+                    />
+                  )}
+                  <input
+                    type="file"
+                    accept="image/*"
+                    disabled={uploading}
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) handleImageUpload(file);
+                    }}
+                    className="block w-full text-[13px] text-foreground/50 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-[13px] file:font-medium file:bg-accent/40 file:text-foreground/70 hover:file:bg-accent/60 file:transition-colors disabled:opacity-50"
+                  />
+                </div>
+                {uploading && (
+                  <p className="text-[12px] text-foreground/35 mt-1.5">Uploading…</p>
+                )}
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
@@ -267,10 +373,12 @@ export default function MenusPage() {
               <div className="pt-2">
                 <button
                   type="submit"
-                  disabled={createItem.isPending}
+                  disabled={createItem.isPending || updateItem.isPending || uploading}
                   className="w-full py-3.5 rounded-2xl bg-foreground text-background text-sm font-semibold btn-smooth hover:opacity-80 disabled:opacity-50"
                 >
-                  {createItem.isPending ? "Adding..." : "Add Item"}
+                  {editId
+                    ? updateItem.isPending ? "Saving..." : "Save Changes"
+                    : createItem.isPending ? "Adding..." : "Add Item"}
                 </button>
               </div>
             </form>

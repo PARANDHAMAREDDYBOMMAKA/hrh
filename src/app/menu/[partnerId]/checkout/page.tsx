@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useCart } from "@/hooks/use-cart";
 import { useRouter, useParams } from "next/navigation";
 import { useSession } from "next-auth/react";
@@ -21,9 +21,21 @@ export default function CheckoutPage() {
   const hour = now.getHours();
   const deliverySlot = hour < 12 ? "BREAKFAST" : "DINNER";
 
+  const role = (session?.user as { role?: string } | undefined)?.role;
+
+  useEffect(() => {
+    if (role === "ADMIN") router.replace("/admin/dashboard");
+    else if (role === "PARTNER") router.replace("/partner/dashboard");
+  }, [role, router]);
+
   async function handleOrder() {
     if (!session) {
       router.push(`/login?callbackUrl=/menu/${params.partnerId}/checkout`);
+      return;
+    }
+
+    if (role && role !== "CUSTOMER") {
+      toast.error("Only customers can place orders");
       return;
     }
 
