@@ -127,15 +127,15 @@ export default function PartnersPage() {
   }
 
   return (
-    <div className="space-y-8 max-w-5xl">
-      <div className="flex items-center justify-between">
+    <div className="space-y-6 sm:space-y-8 max-w-5xl">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight">Partners</h2>
+          <h2 className="text-xl sm:text-2xl font-bold tracking-tight">Partners</h2>
           <p className="text-foreground/35 text-sm mt-1">Manage your hotel and hostel partners</p>
         </div>
         <button
           onClick={() => setShowForm(true)}
-          className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-foreground text-background text-sm font-medium btn-smooth hover:opacity-80"
+          className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-foreground text-background text-sm font-medium btn-smooth hover:opacity-80 self-start sm:self-auto shrink-0"
         >
           <Plus className="w-4 h-4" />
           Add Partner
@@ -327,8 +327,8 @@ export default function PartnersPage() {
                       {partner.isActive ? "Active" : "Inactive"}
                     </span>
                   </div>
-                  <p className="text-sm text-muted-foreground mt-1">{partner.address}{partner.city ? `, ${partner.city}` : ""}</p>
-                  <div className="flex items-center gap-4 mt-2 text-xs text-muted-foreground">
+                  <p className="text-sm text-muted-foreground mt-1 break-words">{partner.address}{partner.city ? `, ${partner.city}` : ""}</p>
+                  <div className="flex items-center flex-wrap gap-x-4 gap-y-1 mt-2 text-xs text-muted-foreground">
                     <span>{partner.contactPerson}</span>
                     <span>{partner.phone}</span>
                     <span>{partner.commissionRate}% commission</span>

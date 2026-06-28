@@ -75,7 +75,7 @@ export default function PartnerLayout({ children }: { children: React.ReactNode 
 
       {sidebarOpen && <div className="fixed inset-0 bg-black/20 backdrop-blur-[2px] z-40 lg:hidden" onClick={() => setSidebarOpen(false)} />}
 
-      <div className="flex-1 lg:ml-[260px]">
+      <div className="flex-1 min-w-0 lg:ml-[260px]">
         <header className="sticky top-0 z-30 bg-[#fafaf9]/80 backdrop-blur-2xl px-6 lg:px-8 py-4 flex items-center gap-4">
           <button className="lg:hidden text-foreground/40 hover:text-foreground transition-colors" onClick={() => setSidebarOpen(!sidebarOpen)}>
             {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}

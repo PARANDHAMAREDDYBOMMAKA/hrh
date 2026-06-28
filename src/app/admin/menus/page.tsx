@@ -131,17 +131,17 @@ export default function MenusPage() {
     "w-full px-4 py-3.5 rounded-2xl bg-accent/40 border-0 text-foreground placeholder-foreground/25 focus:outline-none focus:ring-2 focus:ring-orange-500/20 transition-all duration-400 text-sm";
 
   return (
-    <div className="space-y-8 max-w-4xl">
-      <div className="flex items-center justify-between">
+    <div className="space-y-6 sm:space-y-8 max-w-4xl">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight">Menu</h2>
+          <h2 className="text-xl sm:text-2xl font-bold tracking-tight">Menu</h2>
           <p className="text-foreground/35 text-sm mt-1">
             Manage your breakfast and dinner items
           </p>
         </div>
         <button
           onClick={openCreate}
-          className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-foreground text-background text-sm font-medium btn-smooth hover:opacity-80"
+          className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-foreground text-background text-sm font-medium btn-smooth hover:opacity-80 self-start sm:self-auto shrink-0"
         >
           <Plus className="w-4 h-4" />
           Add Item
@@ -190,18 +190,18 @@ export default function MenusPage() {
           {items.map((item, i) => (
             <div
               key={item.id}
-              className={`flex items-center justify-between p-6 hover:bg-accent/20 transition-colors duration-400 ${
+              className={`flex items-center justify-between gap-3 p-4 sm:p-6 hover:bg-accent/20 transition-colors duration-400 ${
                 i < items.length - 1 ? "border-b border-border/30" : ""
               }`}
             >
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-3 sm:gap-4 min-w-0 flex-1">
                 {item.imageUrl && (
                   <Image
                     src={item.imageUrl}
                     alt={item.name}
                     width={48}
                     height={48}
-                    className="w-12 h-12 rounded-xl object-cover shrink-0"
+                    className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl object-cover shrink-0"
                   />
                 )}
                 <Circle
@@ -210,9 +210,9 @@ export default function MenusPage() {
                   }`}
                   fill="currentColor"
                 />
-                <div>
+                <div className="min-w-0">
                   <div
-                    className={`font-medium text-sm ${
+                    className={`font-medium text-sm truncate ${
                       !item.isAvailable
                         ? "line-through text-foreground/30"
                         : "text-foreground/80"
@@ -221,13 +221,13 @@ export default function MenusPage() {
                     {item.name}
                   </div>
                   {item.description && (
-                    <p className="text-[12px] text-foreground/30 mt-0.5">
+                    <p className="text-[12px] text-foreground/30 mt-0.5 truncate">
                       {item.description}
                     </p>
                   )}
                 </div>
               </div>
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-1.5 sm:gap-4 shrink-0">
                 <span className="text-sm font-bold tracking-tight">
                   ₹{item.price}
                 </span>
