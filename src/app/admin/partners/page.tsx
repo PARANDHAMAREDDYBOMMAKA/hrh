@@ -1,11 +1,10 @@
 "use client";
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useState, useRef } from "react";
+import { useState } from "react";
+import Link from "next/link";
 import { toast } from "sonner";
-import { Plus, Building2, QrCode, ToggleLeft, ToggleRight, Trash2, X, Download, Copy, Check } from "lucide-react";
-import { ConfirmDialog } from "@/components/confirm-dialog";
-import { QRCodeSVG, QRCodeCanvas } from "qrcode.react";
+import { Plus, Building2, X, Copy, Check, ChevronRight } from "lucide-react";
 
 interface Partner {
   id: string;
@@ -25,12 +24,8 @@ interface Partner {
 export default function PartnersPage() {
   const queryClient = useQueryClient();
   const [showForm, setShowForm] = useState(false);
-  const [showQR, setShowQR] = useState<Partner | null>(null);
-  const [copied, setCopied] = useState(false);
   const [newPartnerCreds, setNewPartnerCreds] = useState<{ email: string; password: string } | null>(null);
-  const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
-  const qrCanvasRef = useRef<HTMLDivElement>(null);
-  const [form, setForm] = useState({ name: "", address: "", city: "", contactPerson: "", phone: "", email: "", commissionRate: "10", totalRooms: "0" });
+  const [form, setForm] = useState({ name: "", address: "", city: "", contactPerson: "", phone: "", email: "", commissionRate: "10" });
 
   const { data: partners = [], isLoading } = useQuery<Partner[]>({
     queryKey: ["partners"],
@@ -42,7 +37,7 @@ export default function PartnersPage() {
       const res = await fetch("/api/admin/partners", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...data, commissionRate: parseFloat(data.commissionRate), totalRooms: parseInt(data.totalRooms) }),
+        body: JSON.stringify({ ...data, commissionRate: parseFloat(data.commissionRate) }),
       });
       if (!res.ok) {
         const err = await res.json();
@@ -53,7 +48,7 @@ export default function PartnersPage() {
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["partners"] });
       setShowForm(false);
-      setForm({ name: "", address: "", city: "", contactPerson: "", phone: "", email: "", commissionRate: "10", totalRooms: "0" });
+      setForm({ name: "", address: "", city: "", contactPerson: "", phone: "", email: "", commissionRate: "10" });
       if (data.credentials) {
         setNewPartnerCreds(data.credentials);
       }
@@ -62,72 +57,8 @@ export default function PartnersPage() {
     onError: (err: Error) => toast.error(err.message),
   });
 
-  const toggleMutation = useMutation({
-    mutationFn: ({ id, isActive }: { id: string; isActive: boolean }) =>
-      fetch(`/api/admin/partners/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ isActive }),
-      }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["partners"] });
-      toast.success("Partner updated");
-    },
-  });
-
-  const deleteMutation = useMutation({
-    mutationFn: (id: string) => fetch(`/api/admin/partners/${id}`, { method: "DELETE" }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["partners"] });
-      toast.success("Partner deleted");
-    },
-  });
-
-  const menuUrl = (id: string) => `${typeof window !== "undefined" ? window.location.origin : ""}/menu/${id}`;
-
-  function downloadQR() {
-    if (!showQR || !qrCanvasRef.current) return;
-    const canvas = qrCanvasRef.current.querySelector("canvas");
-    if (!canvas) return;
-
-    const padding = 40;
-    const labelHeight = 60;
-    const finalCanvas = document.createElement("canvas");
-    finalCanvas.width = canvas.width + padding * 2;
-    finalCanvas.height = canvas.height + padding * 2 + labelHeight;
-    const ctx = finalCanvas.getContext("2d")!;
-
-    ctx.fillStyle = "#ffffff";
-    ctx.fillRect(0, 0, finalCanvas.width, finalCanvas.height);
-
-    ctx.drawImage(canvas, padding, padding);
-
-    ctx.fillStyle = "#1a1a1a";
-    ctx.font = "bold 24px system-ui, sans-serif";
-    ctx.textAlign = "center";
-    ctx.fillText(showQR.name, finalCanvas.width / 2, canvas.height + padding + 30);
-
-    ctx.fillStyle = "#f97316";
-    ctx.font = "16px system-ui, sans-serif";
-    ctx.fillText("Scan to order food", finalCanvas.width / 2, canvas.height + padding + 55);
-
-    const link = document.createElement("a");
-    link.download = `QR-${showQR.name.replace(/\s+/g, "-")}.png`;
-    link.href = finalCanvas.toDataURL("image/png");
-    link.click();
-    toast.success("QR downloaded");
-  }
-
-  function copyLink() {
-    if (!showQR) return;
-    navigator.clipboard.writeText(menuUrl(showQR.id));
-    setCopied(true);
-    toast.success("Link copied");
-    setTimeout(() => setCopied(false), 2000);
-  }
-
   return (
-    <div className="space-y-6 sm:space-y-8 max-w-5xl">
+    <div className="space-y-6 sm:space-y-8">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h2 className="text-xl sm:text-2xl font-bold tracking-tight">Partners</h2>
@@ -183,31 +114,16 @@ export default function PartnersPage() {
                   />
                 </div>
               ))}
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-foreground/70 mb-1.5">Commission %</label>
-                  <input
-                    type="number"
-                    min="0"
-                    max="100"
-                    step="0.1"
-                    value={form.commissionRate}
-                    onChange={(e) => setForm((p) => ({ ...p, commissionRate: e.target.value }))}
-                    placeholder="e.g. 10"
-                    className="w-full px-4 py-3 rounded-2xl bg-accent/40 border-0 text-foreground placeholder-foreground/25 focus:outline-none focus:ring-2 focus:ring-orange-500/20 transition-all duration-400 text-sm"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-foreground/70 mb-1.5">Total Rooms</label>
-                  <input
-                    type="number"
-                    min="0"
-                    value={form.totalRooms}
-                    onChange={(e) => setForm((p) => ({ ...p, totalRooms: e.target.value }))}
-                    placeholder="e.g. 20"
-                    className="w-full px-4 py-3 rounded-2xl bg-accent/40 border-0 text-foreground placeholder-foreground/25 focus:outline-none focus:ring-2 focus:ring-orange-500/20 transition-all duration-400 text-sm"
-                  />
-                </div>
+              <div>
+                <label className="block text-sm font-medium text-foreground/70 mb-1.5">Commission %</label>
+                <input
+                  type="number" min="0" max="100" step="0.1"
+                  value={form.commissionRate}
+                  onChange={(e) => setForm((p) => ({ ...p, commissionRate: e.target.value }))}
+                  placeholder="e.g. 10"
+                  className="w-full px-4 py-3 rounded-2xl bg-accent/40 border-0 text-foreground placeholder-foreground/25 focus:outline-none focus:ring-2 focus:ring-orange-500/20 transition-all duration-400 text-sm"
+                />
+                <p className="text-xs text-foreground/30 mt-1.5">The partner will set their room count when they first sign in.</p>
               </div>
               <button
                 type="submit"
@@ -245,13 +161,13 @@ export default function PartnersPage() {
             <div className="flex gap-3">
               <button
                 onClick={() => {
-                  navigator.clipboard.writeText(`Email: ${newPartnerCreds.email}\nPassword: ${newPartnerCreds.password}`);
-                  toast.success("Credentials copied");
+                  navigator.clipboard.writeText(newPartnerCreds.password);
+                  toast.success("Password copied");
                 }}
                 className="flex-1 py-2.5 rounded-xl border border-border text-sm font-medium hover:bg-accent transition-colors flex items-center justify-center gap-2"
               >
                 <Copy className="w-4 h-4" />
-                Copy
+                Copy Password
               </button>
               <button
                 onClick={() => setNewPartnerCreds(null)}
@@ -260,46 +176,6 @@ export default function PartnersPage() {
                 Done
               </button>
             </div>
-          </div>
-        </div>
-      )}
-
-      {showQR && (
-        <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl border border-border p-8 text-center max-w-sm w-full shadow-2xl">
-            <h3 className="text-lg font-bold mb-1">{showQR.name}</h3>
-            <p className="text-sm text-muted-foreground mb-6">Scan to view menu & order food</p>
-
-            <div className="bg-white p-6 rounded-xl border border-border inline-block mb-4">
-              <QRCodeSVG value={menuUrl(showQR.id)} size={200} />
-            </div>
-
-            <div ref={qrCanvasRef} className="hidden">
-              <QRCodeCanvas value={menuUrl(showQR.id)} size={300} />
-            </div>
-
-            <p className="text-xs text-muted-foreground break-all mb-6 px-4">{menuUrl(showQR.id)}</p>
-
-            <div className="grid grid-cols-2 gap-2 mb-4">
-              <button
-                onClick={downloadQR}
-                className="flex flex-col items-center gap-1.5 py-3 rounded-xl bg-orange-50 border border-orange-200 text-orange-600 hover:bg-orange-100 transition-colors"
-              >
-                <Download className="w-5 h-5" />
-                <span className="text-xs font-medium">Download</span>
-              </button>
-              <button
-                onClick={copyLink}
-                className="flex flex-col items-center gap-1.5 py-3 rounded-xl bg-blue-50 border border-blue-200 text-blue-600 hover:bg-blue-100 transition-colors"
-              >
-                {copied ? <Check className="w-5 h-5" /> : <Copy className="w-5 h-5" />}
-                <span className="text-xs font-medium">{copied ? "Copied!" : "Copy Link"}</span>
-              </button>
-            </div>
-
-            <button onClick={() => { setShowQR(null); setCopied(false); }} className="w-full py-2.5 rounded-xl border border-border text-sm font-medium hover:bg-accent transition-colors">
-              Close
-            </button>
           </div>
         </div>
       )}
@@ -318,8 +194,12 @@ export default function PartnersPage() {
       ) : (
         <div className="space-y-3">
           {partners.map((partner) => (
-            <div key={partner.id} className="p-5 rounded-2xl bg-white border border-border hover:border-orange-200 transition-colors">
-              <div className="flex items-center justify-between flex-wrap gap-4">
+            <Link
+              key={partner.id}
+              href={`/admin/partners/${partner.id}`}
+              className="block p-5 rounded-2xl bg-white border border-border hover:border-orange-200 hover:shadow-soft transition-all group"
+            >
+              <div className="flex items-center justify-between gap-4">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-3">
                     <h3 className="font-semibold truncate">{partner.name}</h3>
@@ -335,39 +215,12 @@ export default function PartnersPage() {
                     <span>{partner._count.orders} orders</span>
                   </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <button onClick={() => setShowQR(partner)} className="p-2 rounded-lg hover:bg-orange-50 transition-colors" title="QR Code">
-                    <QrCode className="w-4 h-4 text-orange-500" />
-                  </button>
-                  <button
-                    onClick={() => toggleMutation.mutate({ id: partner.id, isActive: !partner.isActive })}
-                    className="p-2 rounded-lg hover:bg-accent transition-colors"
-                    title="Toggle Status"
-                  >
-                    {partner.isActive ? <ToggleRight className="w-4 h-4 text-emerald-500" /> : <ToggleLeft className="w-4 h-4" />}
-                  </button>
-                  <button
-                    onClick={() => setDeleteTarget(partner.id)}
-                    className="p-2 rounded-lg hover:bg-red-50 text-muted-foreground hover:text-red-500 transition-colors"
-                    title="Delete"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
-                </div>
+                <ChevronRight className="w-5 h-5 text-foreground/20 group-hover:text-foreground/50 transition-colors shrink-0" />
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       )}
-
-      <ConfirmDialog
-        open={!!deleteTarget}
-        title="Delete Partner"
-        message="Are you sure you want to delete this partner? This will also remove their login access. This action cannot be undone."
-        confirmLabel="Delete Partner"
-        onConfirm={() => { if (deleteTarget) deleteMutation.mutate(deleteTarget); }}
-        onCancel={() => setDeleteTarget(null)}
-      />
     </div>
   );
 }

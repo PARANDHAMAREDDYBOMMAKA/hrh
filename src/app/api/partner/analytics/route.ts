@@ -11,10 +11,9 @@ export async function GET() {
 
   const partnerId = session.user.partnerId;
   const now = new Date();
-  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
   const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
-  const [partner, totalOrders, todayOrders, monthlyStats, activeOrders] =
+  const [partner, totalOrders, todayOrders, totalStats, activeOrders] =
     await Promise.all([
       prisma.partner.findUnique({
         where: { id: partnerId },
@@ -27,7 +26,6 @@ export async function GET() {
       prisma.order.aggregate({
         where: {
           partnerId,
-          createdAt: { gte: startOfMonth },
           status: { not: "CANCELLED" },
         },
         _sum: { totalAmount: true, commissionAmount: true },
@@ -50,9 +48,8 @@ export async function GET() {
     totalRooms: partner?.totalRooms || 0,
     totalOrders,
     todayOrders,
-    monthlyRevenue: monthlyStats._sum.totalAmount || 0,
-    monthlyCommission: monthlyStats._sum.commissionAmount || 0,
-    monthlyOrderCount: monthlyStats._count,
+    totalRevenue: totalStats._sum.totalAmount || 0,
+    totalCommission: totalStats._sum.commissionAmount || 0,
     activeOrders,
   });
 }

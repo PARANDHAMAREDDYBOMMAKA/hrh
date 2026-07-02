@@ -70,14 +70,14 @@ export default function OrdersPage() {
 
   if (isLoading) {
     return (
-      <div className="space-y-4 max-w-5xl">
+      <div className="space-y-4">
         {Array.from({ length: 4 }).map((_, i) => <div key={i} className="h-24 rounded-2xl bg-white animate-pulse" />)}
       </div>
     );
   }
 
   return (
-    <div className="space-y-5 max-w-5xl">
+    <div className="space-y-5">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>

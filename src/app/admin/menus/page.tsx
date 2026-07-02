@@ -131,7 +131,7 @@ export default function MenusPage() {
     "w-full px-4 py-3.5 rounded-2xl bg-accent/40 border-0 text-foreground placeholder-foreground/25 focus:outline-none focus:ring-2 focus:ring-orange-500/20 transition-all duration-400 text-sm";
 
   return (
-    <div className="space-y-6 sm:space-y-8 max-w-4xl">
+    <div className="space-y-6 sm:space-y-8">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h2 className="text-xl sm:text-2xl font-bold tracking-tight">Menu</h2>

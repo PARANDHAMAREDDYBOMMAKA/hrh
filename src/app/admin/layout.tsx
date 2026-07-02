@@ -10,6 +10,7 @@ import {
   Utensils,
   Building2,
   ShoppingBag,
+  Clock,
   LogOut,
   Menu,
   X,
@@ -23,6 +24,7 @@ const navItems = [
   { href: "/admin/menus", label: "Menus", icon: Utensils },
   { href: "/admin/partners", label: "Partners", icon: Building2 },
   { href: "/admin/orders", label: "Orders", icon: ShoppingBag },
+  { href: "/admin/settings", label: "Timings", icon: Clock },
 ];
 
 export default function AdminLayout({
@@ -111,15 +113,17 @@ export default function AdminLayout({
       )}
 
       <div className="flex-1 min-w-0 lg:ml-[260px]">
-        <header className="sticky top-0 z-30 bg-[#fafaf9]/80 backdrop-blur-2xl px-6 lg:px-8 py-4 flex items-center gap-4">
-          <button className="lg:hidden text-foreground/40 hover:text-foreground transition-colors" onClick={() => setSidebarOpen(!sidebarOpen)}>
-            {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-          </button>
-          <h1 className="text-[15px] font-semibold text-foreground/70 capitalize tracking-tight">
-            {pathname.split("/").pop()?.replace(/-/g, " ")}
-          </h1>
+        <header className="sticky top-0 z-30 bg-[#fafaf9]/80 backdrop-blur-2xl py-4">
+          <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center gap-4">
+            <button className="lg:hidden text-foreground/40 hover:text-foreground transition-colors" onClick={() => setSidebarOpen(!sidebarOpen)}>
+              {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
+            <h1 className="text-[15px] font-semibold text-foreground/70 capitalize tracking-tight">
+              {pathname.split("/").pop()?.replace(/-/g, " ")}
+            </h1>
+          </div>
         </header>
-        <main className="p-6 lg:p-8">{children}</main>
+        <main className="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-8">{children}</main>
       </div>
     </div>
   );

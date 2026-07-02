@@ -57,14 +57,14 @@ export default function PartnerOrdersPage() {
 
   if (isLoading) {
     return (
-      <div className="space-y-4 max-w-4xl">
+      <div className="space-y-4">
         {Array.from({ length: 4 }).map((_, i) => <div key={i} className="h-24 rounded-2xl bg-white animate-pulse" />)}
       </div>
     );
   }
 
   return (
-    <div className="space-y-5 max-w-4xl">
+    <div className="space-y-5">
       <div>
         <h2 className="text-xl font-bold tracking-tight">Orders</h2>
         <p className="text-foreground/30 text-[13px] mt-0.5">{orders.length} total &middot; {activeCount} active</p>

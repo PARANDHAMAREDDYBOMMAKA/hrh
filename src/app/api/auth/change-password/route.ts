@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma";
 
 export async function POST(req: Request) {
   try {
-    const { email, newPassword } = await req.json();
+    const { email, newPassword, totalRooms } = await req.json();
 
     if (!email || !newPassword) {
       return NextResponse.json({ error: "All fields are required" }, { status: 400 });
@@ -35,6 +35,11 @@ export async function POST(req: Request) {
         mustChangePassword: false,
       },
     });
+
+    if (user.role === "PARTNER" && user.partnerId && totalRooms !== undefined) {
+      const rooms = Math.max(0, parseInt(totalRooms) || 0);
+      await prisma.partner.update({ where: { id: user.partnerId }, data: { totalRooms: rooms } });
+    }
 
     return NextResponse.json({ success: true });
   } catch {

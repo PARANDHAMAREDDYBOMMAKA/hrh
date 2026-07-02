@@ -1,8 +1,10 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
+import { useSession } from "next-auth/react";
 import { ShoppingBag, Clock, IndianRupee, Package, ArrowUpRight } from "lucide-react";
 import Link from "next/link";
+import { PartnerQR } from "@/components/partner-qr";
 
 interface ActiveOrder {
   id: string;
@@ -25,6 +27,8 @@ const statusConfig: Record<string, { label: string; bg: string; dot: string }> =
 };
 
 export default function PartnerDashboard() {
+  const { data: session } = useSession();
+  const partnerId = (session?.user as { partnerId?: string | null } | undefined)?.partnerId;
   const { data, isLoading } = useQuery({
     queryKey: ["partner-analytics"],
     queryFn: () => fetch("/api/partner/analytics").then((r) => r.json()),
@@ -33,7 +37,7 @@ export default function PartnerDashboard() {
 
   if (isLoading) {
     return (
-      <div className="space-y-6 max-w-5xl">
+      <div className="space-y-6">
         <div className="h-24 rounded-2xl bg-white animate-pulse" />
         <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
           {Array.from({ length: 3 }).map((_, i) => (
@@ -48,21 +52,24 @@ export default function PartnerDashboard() {
   const stats = [
     { label: "Today's Orders", value: data?.todayOrders || 0, icon: Clock, iconBg: "bg-blue-500" },
     { label: "Total Orders", value: data?.totalOrders || 0, icon: ShoppingBag, iconBg: "bg-orange-500" },
-    { label: "Monthly Revenue", value: `₹${(data?.monthlyCommission || 0).toLocaleString()}`, icon: IndianRupee, iconBg: "bg-emerald-500" },
+    { label: "Total Revenue", value: `₹${(data?.totalCommission || 0).toLocaleString()}`, icon: IndianRupee, iconBg: "bg-emerald-500" },
   ];
 
   const activeOrders: ActiveOrder[] = data?.activeOrders || [];
 
   return (
-    <div className="space-y-6 max-w-5xl">
+    <div className="space-y-4">
       {/* Welcome */}
-      <div className="p-6 rounded-2xl bg-foreground text-background relative overflow-hidden">
+      <div className="p-5 rounded-2xl bg-foreground text-background relative overflow-hidden">
         <div className="absolute top-0 right-0 w-48 h-48 bg-white/3 rounded-full -translate-y-1/2 translate-x-1/3" />
-        <div className="relative">
-          <h1 className="text-xl font-bold tracking-tight">Welcome back, {data?.partnerName || "Partner"}</h1>
-          <p className="text-background/40 text-[13px] mt-1">
-            Commission rate: {Math.abs(data?.commissionRate ?? 0)}% &middot; {data?.totalRooms ?? 0} rooms
-          </p>
+        <div className="relative flex items-center justify-between gap-4">
+          <div className="min-w-0">
+            <h1 className="text-xl font-bold tracking-tight">Welcome back, {data?.partnerName || "Partner"}</h1>
+            <p className="text-background/40 text-[13px] mt-1">
+              Commission rate: {Math.abs(data?.commissionRate ?? 0)}% &middot; {data?.totalRooms ?? 0} rooms
+            </p>
+          </div>
+          {partnerId && <PartnerQR partnerId={partnerId} partnerName={data?.partnerName || "Partner"} />}
         </div>
       </div>
 
@@ -97,7 +104,7 @@ export default function PartnerDashboard() {
         </div>
 
         {activeOrders.length === 0 ? (
-          <div className="p-14 text-center border-t border-black/3">
+          <div className="py-10 px-6 text-center border-t border-black/3">
             <Package className="w-8 h-8 mx-auto text-foreground/10 mb-3" />
             <p className="text-foreground/25 text-[13px] font-medium">No active orders right now</p>
             <p className="text-foreground/15 text-[11px] mt-1">New orders will appear here</p>

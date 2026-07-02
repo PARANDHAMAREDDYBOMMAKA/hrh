@@ -15,6 +15,7 @@ function ChangePasswordForm() {
   const email = searchParams.get("email") || "";
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [rooms, setRooms] = useState("");
   const [showNew, setShowNew] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -33,12 +34,17 @@ function ChangePasswordForm() {
       return;
     }
 
+    if (!rooms || parseInt(rooms) < 1) {
+      setError("Please enter the number of rooms");
+      return;
+    }
+
     setLoading(true);
 
     const res = await fetch("/api/auth/change-password", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, newPassword }),
+      body: JSON.stringify({ email, newPassword, totalRooms: rooms }),
     });
 
     const data = await res.json();
@@ -144,6 +150,22 @@ function ChangePasswordForm() {
               className={inputClass}
               placeholder="Confirm your password"
             />
+          </div>
+
+          <div>
+            <label className="block text-[13px] font-medium text-foreground/50 mb-2">
+              Number of Rooms
+            </label>
+            <input
+              type="number"
+              min="1"
+              value={rooms}
+              onChange={(e) => setRooms(e.target.value)}
+              required
+              className={inputClass}
+              placeholder="e.g. 40"
+            />
+            <p className="text-[11px] text-foreground/30 mt-1.5">How many rooms does your property have?</p>
           </div>
 
           <div className="pt-1">

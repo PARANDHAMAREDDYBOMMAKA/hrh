@@ -30,10 +30,15 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
   const { id } = await params;
   const body = await req.json();
 
-  const partner = await prisma.partner.update({
-    where: { id },
-    data: body,
-  });
+  const data: Record<string, unknown> = {};
+  for (const key of ["name", "address", "city", "contactPerson", "phone"]) {
+    if (typeof body[key] === "string") data[key] = body[key].trim();
+  }
+  if (body.commissionRate !== undefined) data.commissionRate = parseFloat(body.commissionRate) || 0;
+  if (body.totalRooms !== undefined) data.totalRooms = parseInt(body.totalRooms) || 0;
+  if (typeof body.isActive === "boolean") data.isActive = body.isActive;
+
+  const partner = await prisma.partner.update({ where: { id }, data });
 
   return NextResponse.json(partner);
 }

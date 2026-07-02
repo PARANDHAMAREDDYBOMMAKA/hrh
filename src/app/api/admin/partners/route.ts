@@ -31,9 +31,7 @@ export async function POST(req: Request) {
 
   try {
     const body = await req.json();
-    const { name, address, city, contactPerson, phone, email, commissionRate, totalRooms } = body;
-
-    console.log("[Partner Create] Received:", { name, commissionRate, totalRooms, commissionRateType: typeof commissionRate, totalRoomsType: typeof totalRooms });
+    const { name, address, city, contactPerson, phone, email, commissionRate } = body;
 
     if (!name || !address || !contactPerson || !phone || !email) {
       return NextResponse.json({ error: "All fields including email are required" }, { status: 400 });
@@ -56,7 +54,6 @@ export async function POST(req: Request) {
         phone,
         email: email.toLowerCase().trim(),
         commissionRate: Math.max(0, parseFloat(commissionRate) || 10),
-        totalRooms: Math.max(0, parseInt(totalRooms) || 0),
         users: {
           create: {
             name: contactPerson,

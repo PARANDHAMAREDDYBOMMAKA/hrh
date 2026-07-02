@@ -32,13 +32,6 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Email already registered" }, { status: 409 });
     }
 
-    if (phoneDigits) {
-      const phoneExists = await prisma.user.findUnique({ where: { phone: phoneDigits } });
-      if (phoneExists) {
-        return NextResponse.json({ error: "Phone number already registered" }, { status: 409 });
-      }
-    }
-
     const hashedPassword = await bcrypt.hash(password, 12);
 
     const user = await prisma.user.create({
@@ -58,7 +51,7 @@ export async function POST(req: Request) {
     console.error("[Register Error]", err);
     const message = err instanceof Error ? err.message : "Internal server error";
     if (message.includes("Unique constraint")) {
-      return NextResponse.json({ error: "Email or phone number already registered" }, { status: 409 });
+      return NextResponse.json({ error: "Email already registered" }, { status: 409 });
     }
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
