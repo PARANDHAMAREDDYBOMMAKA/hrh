@@ -2,8 +2,9 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { audit, actorOf } from "@/lib/audit";
 
-export async function GET() {
+export async function GET(req: Request) {
   const session = await getServerSession(authOptions);
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
@@ -19,6 +20,12 @@ export async function GET() {
       customer: { select: { name: true, email: true } },
     },
     take: 100,
+  });
+
+  audit(req, {
+    action: "ORDERS_VIEW",
+    entityType: "Order",
+    actor: actorOf(session),
   });
 
   return NextResponse.json(orders);
@@ -60,6 +67,20 @@ export async function POST(req: Request) {
         totalAmount,
         deliverySlot,
         commissionAmount,
+      },
+    });
+
+    audit(req, {
+      action: "ORDER_CREATE",
+      entityType: "Order",
+      entityId: order.id,
+      actor: actorOf(session),
+      metadata: {
+        orderNumber: order.orderNumber,
+        partnerId,
+        totalAmount,
+        deliverySlot,
+        itemCount: items.length,
       },
     });
 

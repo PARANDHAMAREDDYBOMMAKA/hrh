@@ -4,6 +4,7 @@ import crypto from "crypto";
 import bcrypt from "bcryptjs";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { audit, actorOf } from "@/lib/audit";
 
 async function requireAdmin() {
   const session = await getServerSession(authOptions);
@@ -13,13 +14,19 @@ async function requireAdmin() {
   return session;
 }
 
-export async function GET() {
+export async function GET(req: Request) {
   const session = await requireAdmin();
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const partners = await prisma.partner.findMany({
     orderBy: { createdAt: "desc" },
     include: { _count: { select: { orders: true } } },
+  });
+
+  audit(req, {
+    action: "PARTNERS_VIEW",
+    entityType: "Partner",
+    actor: actorOf(session),
   });
 
   return NextResponse.json(partners);
@@ -65,6 +72,19 @@ export async function POST(req: Request) {
             mustChangePassword: true,
           },
         },
+      },
+    });
+
+    audit(req, {
+      action: "PARTNER_CREATE",
+      entityType: "Partner",
+      entityId: partner.id,
+      actor: actorOf(session),
+      metadata: {
+        name: partner.name,
+        email: partner.email,
+        city: partner.city,
+        commissionRate: partner.commissionRate,
       },
     });
 

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { uploadFile } from "@/lib/storage";
+import { audit, actorOf } from "@/lib/audit";
 
 const MAX_SIZE = 5 * 1024 * 1024;
 
@@ -27,6 +28,12 @@ export async function POST(req: Request) {
 
   try {
     const url = await uploadFile(file, prefix);
+    audit(req, {
+      action: "FILE_UPLOAD",
+      entityType: "File",
+      actor: actorOf(session),
+      metadata: { prefix, fileName: file.name, fileType: file.type, fileSize: file.size, url },
+    });
     return NextResponse.json({ url });
   } catch {
     return NextResponse.json({ error: "Upload failed" }, { status: 500 });

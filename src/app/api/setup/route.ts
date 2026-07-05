@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
+import { audit } from "@/lib/audit";
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
     const existing = await prisma.user.findUnique({ where: { email: "admin@hrh.com" } });
     if (existing) {
@@ -30,6 +31,12 @@ export async function GET() {
       where: { slotType: "DINNER" },
       update: {},
       create: { name: "Dinner", slotType: "DINNER", orderCutoffTime: "17:00", deliveryTime: "20:00" },
+    });
+
+    audit(req, {
+      action: "SETUP_ADMIN_CREATE",
+      entityType: "User",
+      actor: { email: "admin@hrh.com", role: "ADMIN" },
     });
 
     return NextResponse.json({ message: "Admin created. Email: admin@hrh.com, Password: admin123. DELETE THIS ROUTE NOW." });

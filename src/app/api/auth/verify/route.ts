@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { audit } from "@/lib/audit";
 
 export async function POST(req: Request) {
   try {
@@ -18,12 +19,24 @@ export async function POST(req: Request) {
 
     
     if (!token) {
+      audit(req, {
+        action: "EMAIL_VERIFY",
+        status: "FAILURE",
+        actor: { email: email.toLowerCase().trim() },
+        metadata: { reason: "invalid_code" },
+      });
       return NextResponse.json({ error: "Invalid verification code" }, { status: 400 });
     }
 
     if (token.expires < new Date()) {
       await prisma.verificationToken.delete({
         where: { identifier_token: { identifier: token.identifier, token: token.token } },
+      });
+      audit(req, {
+        action: "EMAIL_VERIFY",
+        status: "FAILURE",
+        actor: { email: email.toLowerCase().trim() },
+        metadata: { reason: "code_expired" },
       });
       return NextResponse.json({ error: "Verification code has expired. Please register again." }, { status: 400 });
     }
@@ -35,6 +48,11 @@ export async function POST(req: Request) {
 
     await prisma.verificationToken.delete({
       where: { identifier_token: { identifier: token.identifier, token: token.token } },
+    });
+
+    audit(req, {
+      action: "EMAIL_VERIFY",
+      actor: { email: email.toLowerCase().trim() },
     });
 
     return NextResponse.json({ verified: true });

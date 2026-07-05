@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
+import { audit } from "@/lib/audit";
 
 export async function POST(req: Request) {
   try {
@@ -44,6 +45,13 @@ export async function POST(req: Request) {
         isVerified: true,
         customerProfile: { create: {} },
       },
+    });
+
+    audit(req, {
+      action: "USER_REGISTER",
+      entityType: "User",
+      entityId: user.id,
+      actor: { id: user.id, email: user.email, role: user.role },
     });
 
     return NextResponse.json({ id: user.id, email: user.email }, { status: 201 });

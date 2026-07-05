@@ -2,6 +2,7 @@ import { type NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
+import { auditDirect, ipFromHeaderObject } from "@/lib/audit";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -11,16 +12,29 @@ export const authOptions: NextAuthOptions = {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
       },
-      async authorize(credentials) {
+      async authorize(credentials, req) {
+        const ipAddress = ipFromHeaderObject(req?.headers);
+        const rawUserAgent = req?.headers?.["user-agent"];
+        const userAgent = Array.isArray(rawUserAgent) ? rawUserAgent[0] : rawUserAgent ?? null;
+        const email = credentials?.email?.toLowerCase().trim();
+
         if (!credentials?.email || !credentials?.password) {
           throw new Error("Email and password are required");
         }
 
         const user = await prisma.user.findUnique({
-          where: { email: credentials.email.toLowerCase().trim() },
+          where: { email: email! },
         });
 
         if (!user) {
+          await auditDirect({
+            action: "LOGIN_FAILURE",
+            status: "FAILURE",
+            actor: { email },
+            ipAddress,
+            userAgent,
+            metadata: { reason: "user_not_found" },
+          });
           throw new Error("Invalid email or password");
         }
 
@@ -29,16 +43,39 @@ export const authOptions: NextAuthOptions = {
           user.password
         );
         if (!isValid) {
+          await auditDirect({
+            action: "LOGIN_FAILURE",
+            status: "FAILURE",
+            actor: { id: user.id, email: user.email, role: user.role },
+            ipAddress,
+            userAgent,
+            metadata: { reason: "invalid_password" },
+          });
           throw new Error("Invalid email or password");
         }
 
         if (user.mustChangePassword) {
+          await auditDirect({
+            action: "LOGIN_BLOCKED",
+            status: "FAILURE",
+            actor: { id: user.id, email: user.email, role: user.role },
+            ipAddress,
+            userAgent,
+            metadata: { reason: "must_change_password" },
+          });
           throw new Error("MUST_CHANGE_PASSWORD:" + user.email);
         }
 
         await prisma.user.update({
           where: { id: user.id },
           data: { lastLogin: new Date(), loginCount: { increment: 1 } },
+        });
+
+        await auditDirect({
+          action: "LOGIN_SUCCESS",
+          actor: { id: user.id, email: user.email, role: user.role },
+          ipAddress,
+          userAgent,
         });
 
         return {

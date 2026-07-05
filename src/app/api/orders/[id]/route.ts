@@ -2,8 +2,9 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { audit, actorOf } from "@/lib/audit";
 
-export async function GET(_req: Request, { params }: { params: Promise<{ id: string }> }) {
+export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const session = await getServerSession(authOptions);
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
@@ -22,6 +23,13 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
     return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
   }
 
+  audit(req, {
+    action: "ORDER_VIEW",
+    entityType: "Order",
+    entityId: order.id,
+    actor: actorOf(session),
+  });
+
   return NextResponse.json(order);
 }
 
@@ -39,9 +47,19 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
     return NextResponse.json({ error: "Invalid status" }, { status: 400 });
   }
 
+  const existing = await prisma.order.findUnique({ where: { id }, select: { status: true } });
+
   const order = await prisma.order.update({
     where: { id },
     data: { status },
+  });
+
+  audit(req, {
+    action: "ORDER_STATUS_UPDATE",
+    entityType: "Order",
+    entityId: order.id,
+    actor: actorOf(session),
+    metadata: { from: existing?.status ?? null, to: status },
   });
 
   return NextResponse.json(order);

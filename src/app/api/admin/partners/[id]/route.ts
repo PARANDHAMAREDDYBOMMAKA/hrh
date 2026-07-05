@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { audit, actorOf } from "@/lib/audit";
 
 async function requireAdmin() {
   const session = await getServerSession(authOptions);
@@ -9,7 +10,7 @@ async function requireAdmin() {
   return session;
 }
 
-export async function GET(_req: Request, { params }: { params: Promise<{ id: string }> }) {
+export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const session = await requireAdmin();
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
@@ -20,6 +21,14 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
   });
 
   if (!partner) return NextResponse.json({ error: "Not found" }, { status: 404 });
+
+  audit(req, {
+    action: "PARTNER_VIEW",
+    entityType: "Partner",
+    entityId: partner.id,
+    actor: actorOf(session),
+  });
+
   return NextResponse.json(partner);
 }
 
@@ -40,14 +49,32 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
 
   const partner = await prisma.partner.update({ where: { id }, data });
 
+  audit(req, {
+    action: "PARTNER_UPDATE",
+    entityType: "Partner",
+    entityId: partner.id,
+    actor: actorOf(session),
+    metadata: { changes: data as Record<string, string | number | boolean> },
+  });
+
   return NextResponse.json(partner);
 }
 
-export async function DELETE(_req: Request, { params }: { params: Promise<{ id: string }> }) {
+export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const session = await requireAdmin();
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const { id } = await params;
+  const partner = await prisma.partner.findUnique({ where: { id }, select: { name: true, email: true } });
   await prisma.partner.delete({ where: { id } });
+
+  audit(req, {
+    action: "PARTNER_DELETE",
+    entityType: "Partner",
+    entityId: id,
+    actor: actorOf(session),
+    metadata: { name: partner?.name ?? null, email: partner?.email ?? null },
+  });
+
   return NextResponse.json({ success: true });
 }

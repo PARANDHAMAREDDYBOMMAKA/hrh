@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { audit, actorOf } from "@/lib/audit";
 
 async function requireAdmin() {
   const session = await getServerSession(authOptions);
@@ -20,6 +21,13 @@ export async function GET(req: Request) {
   const items = await prisma.menuItem.findMany({
     where: slotType ? { slotType: slotType as "BREAKFAST" | "DINNER" } : {},
     orderBy: { sortOrder: "asc" },
+  });
+
+  audit(req, {
+    action: "MENU_ITEMS_VIEW",
+    entityType: "MenuItem",
+    actor: actorOf(session),
+    metadata: { slotType: slotType ?? "ALL" },
   });
 
   return NextResponse.json(items);
@@ -56,6 +64,14 @@ export async function POST(req: Request) {
         imageUrl: imageUrl || null,
         sortOrder: (maxOrder?.sortOrder ?? -1) + 1,
       },
+    });
+
+    audit(req, {
+      action: "MENU_ITEM_CREATE",
+      entityType: "MenuItem",
+      entityId: item.id,
+      actor: actorOf(session),
+      metadata: { name: item.name, price: item.price, slotType: item.slotType },
     });
 
     return NextResponse.json(item, { status: 201 });
