@@ -16,6 +16,9 @@ enum UserRole {
   ADMIN
   PARTNER
   CUSTOMER
+  CRM_OWNER
+  SALES_MANAGER
+  SALES_REP
 }
 
 enum SlotType {
@@ -141,6 +144,13 @@ model User {
   accounts        Account[]
   sessions        Session[]
 
+  ownedCrmLeads         CrmLead[]        @relation("CrmLeadOwner")
+  ownedCrmAccounts      CrmAccount[]     @relation("CrmAccountOwner")
+  ownedCrmContacts      CrmContact[]     @relation("CrmContactOwner")
+  ownedCrmOpportunities CrmOpportunity[] @relation("CrmOpportunityOwner")
+  crmActivities         CrmActivity[]    @relation("CrmActivityOwner")
+  assignedCrmTasks      CrmTask[]        @relation("CrmTaskAssignee")
+
   @@index([role])
   @@index([partnerId])
 }
@@ -265,4 +275,205 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+// ─── CRM MODULE ─────────────────────────────────────────
+
+enum CrmLeadStatus {
+  NEW
+  CONTACTED
+  QUALIFIED
+  UNQUALIFIED
+  CONVERTED
+}
+
+enum CrmLeadSource {
+  WEBSITE
+  REFERRAL
+  COLD_CALL
+  EVENT
+  PARTNER
+  OTHER
+}
+
+enum CrmStage {
+  PROSPECTING
+  QUALIFICATION
+  NEEDS_ANALYSIS
+  VALUE_PROPOSITION
+  PROPOSAL
+  NEGOTIATION
+  CLOSED_WON
+  CLOSED_LOST
+}
+
+enum CrmActivityType {
+  CALL
+  EMAIL
+  MEETING
+  NOTE
+}
+
+enum CrmTaskStatus {
+  OPEN
+  DONE
+}
+
+enum CrmTaskPriority {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+model CrmLead {
+  id             String        @id @default(cuid())
+  name           String
+  company        String?
+  email          String?
+  phone          String?
+  title          String?
+  source         CrmLeadSource @default(OTHER)
+  status         CrmLeadStatus @default(NEW)
+  estimatedValue Float?
+  notes          String?
+  ownerId        String
+  convertedAt        DateTime?
+  convertedAccountId String?
+  convertedContactId String?
+  convertedOppId     String?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  owner      User          @relation("CrmLeadOwner", fields: [ownerId], references: [id])
+  activities CrmActivity[]
+  tasks      CrmTask[]
+
+  @@index([status])
+  @@index([ownerId])
+  @@index([createdAt])
+}
+
+model CrmAccount {
+  id              String   @id @default(cuid())
+  name            String
+  industry        String?
+  website         String?
+  phone           String?
+  email           String?
+  address         String?
+  city            String?
+  notes           String?
+  ownerId         String
+  sourcePartnerId String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  owner         User             @relation("CrmAccountOwner", fields: [ownerId], references: [id])
+  contacts      CrmContact[]
+  opportunities CrmOpportunity[]
+  activities    CrmActivity[]
+  tasks         CrmTask[]
+
+  @@index([ownerId])
+  @@index([name])
+}
+
+model CrmContact {
+  id        String   @id @default(cuid())
+  firstName String
+  lastName  String
+  email     String?
+  phone     String?
+  title     String?
+  accountId String?
+  ownerId   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  owner         User             @relation("CrmContactOwner", fields: [ownerId], references: [id])
+  account       CrmAccount?      @relation(fields: [accountId], references: [id], onDelete: SetNull)
+  opportunities CrmOpportunity[]
+  activities    CrmActivity[]
+  tasks         CrmTask[]
+
+  @@index([ownerId])
+  @@index([accountId])
+}
+
+model CrmOpportunity {
+  id                 String    @id @default(cuid())
+  name               String
+  stage              CrmStage  @default(PROSPECTING)
+  amount             Float     @default(0)
+  probability        Int       @default(10)
+  expectedCloseDate  DateTime?
+  notes              String?
+  accountId          String
+  contactId          String?
+  ownerId            String
+  closedAt           DateTime?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  owner      User          @relation("CrmOpportunityOwner", fields: [ownerId], references: [id])
+  account    CrmAccount    @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  contact    CrmContact?   @relation(fields: [contactId], references: [id], onDelete: SetNull)
+  activities CrmActivity[]
+  tasks      CrmTask[]
+
+  @@index([stage])
+  @@index([ownerId])
+  @@index([accountId])
+}
+
+model CrmActivity {
+  id            String          @id @default(cuid())
+  type          CrmActivityType @default(NOTE)
+  subject       String
+  body          String?
+  ownerId       String
+  leadId        String?
+  accountId     String?
+  contactId     String?
+  opportunityId String?
+  occurredAt    DateTime        @default(now())
+  createdAt     DateTime        @default(now())
+
+  owner       User            @relation("CrmActivityOwner", fields: [ownerId], references: [id])
+  lead        CrmLead?        @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  account     CrmAccount?     @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  contact     CrmContact?     @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  opportunity CrmOpportunity? @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+
+  @@index([ownerId])
+  @@index([occurredAt])
+  @@index([leadId])
+  @@index([accountId])
+  @@index([opportunityId])
+}
+
+model CrmTask {
+  id            String          @id @default(cuid())
+  title         String
+  description   String?
+  dueDate       DateTime?
+  status        CrmTaskStatus   @default(OPEN)
+  priority      CrmTaskPriority @default(MEDIUM)
+  assigneeId    String
+  leadId        String?
+  accountId     String?
+  contactId     String?
+  opportunityId String?
+  completedAt   DateTime?
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+
+  assignee    User            @relation("CrmTaskAssignee", fields: [assigneeId], references: [id])
+  lead        CrmLead?        @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  account     CrmAccount?     @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  contact     CrmContact?     @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  opportunity CrmOpportunity? @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+
+  @@index([assigneeId, status])
+  @@index([dueDate])
 }

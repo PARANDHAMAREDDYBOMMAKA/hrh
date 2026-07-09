@@ -7,6 +7,7 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { Eye, EyeOff, Loader2, CheckCircle, ArrowRight } from "lucide-react";
 import { Logo } from "@/components/logo";
+import { homeForRole } from "@/lib/utils";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
@@ -56,7 +57,7 @@ function AuthPage() {
     }
     if (cbUrl) { router.push(cbUrl); return; }
     const s = await fetch("/api/auth/session").then((r) => r.json());
-    router.push(s?.user?.role === "ADMIN" ? "/admin/dashboard" : s?.user?.role === "PARTNER" ? "/partner/dashboard" : "/customer/dashboard");
+    router.push(homeForRole(s?.user?.role));
   }
 
   async function doRegister(e: React.FormEvent) {
@@ -72,7 +73,7 @@ function AuthPage() {
     const signInResult = await signIn("credentials", { email: reg.email.toLowerCase().trim(), password: reg.password, redirect: false });
     if (signInResult?.ok) {
       const s = await fetch("/api/auth/session").then((r) => r.json());
-      router.push(cbUrl || (s?.user?.role === "ADMIN" ? "/admin/dashboard" : s?.user?.role === "PARTNER" ? "/partner/dashboard" : "/customer/dashboard"));
+      router.push(cbUrl || homeForRole(s?.user?.role));
     } else {
       router.push("/login?registered=true");
     }
