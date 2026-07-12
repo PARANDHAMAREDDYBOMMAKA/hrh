@@ -152,7 +152,7 @@ export default function TasksPage() {
       {isLoading ? (
         <Spinner />
       ) : tasks.length === 0 ? (
-        <div className="rounded-2xl bg-white border border-black/4">
+        <div className="rounded-2xl bg-white border border-black/5 shadow-soft">
           <EmptyState
             icon={<CheckSquare className="w-10 h-10" />}
             title="No tasks here"
@@ -160,7 +160,7 @@ export default function TasksPage() {
           />
         </div>
       ) : (
-        <div className="rounded-2xl bg-white border border-black/4 overflow-hidden divide-y divide-black/4">
+        <div className="rounded-2xl bg-white border border-black/5 shadow-soft overflow-hidden divide-y divide-black/4">
           {tasks.map((t) => {
             const done = t.status === "DONE";
             const overdue = !done && t.dueDate && new Date(t.dueDate) < new Date();

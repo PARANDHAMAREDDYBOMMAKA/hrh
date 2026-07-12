@@ -84,11 +84,11 @@ export default function TeamPage() {
       {isLoading ? (
         <Spinner />
       ) : members.length === 0 ? (
-        <div className="rounded-2xl bg-white border border-black/4">
+        <div className="rounded-2xl bg-white border border-black/5 shadow-soft">
           <EmptyState icon={<Users className="w-10 h-10" />} title="No team members yet" />
         </div>
       ) : (
-        <div className="rounded-2xl bg-white border border-black/4 overflow-hidden divide-y divide-black/4">
+        <div className="rounded-2xl bg-white border border-black/5 shadow-soft overflow-hidden divide-y divide-black/4">
           {members.map((m) => (
             <div key={m.id} className="flex items-center gap-4 px-5 py-4">
               <Avatar name={m.name} className="w-10 h-10 text-[13px]" />

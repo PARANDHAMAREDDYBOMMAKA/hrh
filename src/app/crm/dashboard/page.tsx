@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 import { crmApi } from "@/lib/crm-client";
 import { money, LEAD_STATUS_META } from "@/lib/crm-ui";
-import { StatCard, SectionCard, Spinner } from "@/components/crm/ui";
+import { StatCard, SectionCard, Spinner, PageHeader } from "@/components/crm/ui";
 
 type Report = {
   kpis: {
@@ -49,21 +49,21 @@ export default function CrmDashboard() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between flex-wrap gap-3">
-        <div>
-          <h2 className="text-xl font-bold text-foreground tracking-tight">Sales Overview</h2>
-          <p className="text-[13px] text-foreground/40 mt-0.5">Your pipeline at a glance</p>
-        </div>
-        <Link
-          href="/crm/pipeline"
-          className="inline-flex items-center gap-2 rounded-xl bg-foreground text-background px-4 py-2.5 text-[13px] font-semibold hover:opacity-90 transition"
-        >
-          <TrendingUp className="w-4 h-4" />
-          Open Pipeline
-        </Link>
-      </div>
+      <PageHeader
+        title="Sales Overview"
+        subtitle="Your pipeline at a glance"
+        action={
+          <Link
+            href="/crm/pipeline"
+            className="btn-smooth inline-flex items-center gap-2 rounded-xl bg-foreground text-background px-4 py-2.5 text-[13px] font-semibold shadow-[0_4px_14px_rgba(0,0,0,0.15)] hover:shadow-[0_6px_20px_rgba(0,0,0,0.2)] transition"
+          >
+            <TrendingUp className="w-4 h-4" />
+            Open Pipeline
+          </Link>
+        }
+      />
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 reveal-up">
         <StatCard
           label="Open Pipeline"
           value={money(kpis.pipelineValue)}
@@ -90,7 +90,7 @@ export default function CrmDashboard() {
         />
       </div>
 
-      <div className="grid lg:grid-cols-3 gap-3">
+      <div className="grid lg:grid-cols-3 gap-3 reveal-up stagger-1">
         <StatCard
           label="Activities (30d)"
           value={kpis.activityCount}
@@ -109,7 +109,7 @@ export default function CrmDashboard() {
         />
       </div>
 
-      <div className="grid lg:grid-cols-2 gap-3">
+      <div className="grid lg:grid-cols-2 gap-3 reveal-up stagger-2">
         <SectionCard title="Pipeline by Stage">
           <div className="p-5 space-y-3.5">
             {openStageBars.every((s) => s.count === 0) ? (

@@ -95,7 +95,7 @@ export default function AccountsPage() {
       {isLoading ? (
         <Spinner />
       ) : accounts.length === 0 ? (
-        <div className="rounded-2xl bg-white border border-black/4">
+        <div className="rounded-2xl bg-white border border-black/5 shadow-soft">
           <EmptyState
             icon={<Building2 className="w-10 h-10" />}
             title="No accounts yet"
@@ -108,7 +108,7 @@ export default function AccountsPage() {
             <button
               key={a.id}
               onClick={() => router.push(`/crm/accounts/${a.id}`)}
-              className="text-left rounded-2xl bg-white border border-black/4 p-5 hover:border-black/12 transition"
+              className="text-left rounded-2xl bg-white border border-black/5 shadow-soft p-5 hover:border-black/12 transition"
             >
               <div className="flex items-start justify-between">
                 <div className="w-10 h-10 rounded-xl bg-orange-50 flex items-center justify-center">

@@ -93,7 +93,7 @@ export default function ContactsPage() {
       {isLoading ? (
         <Spinner />
       ) : contacts.length === 0 ? (
-        <div className="rounded-2xl bg-white border border-black/4">
+        <div className="rounded-2xl bg-white border border-black/5 shadow-soft">
           <EmptyState
             icon={<ContactIcon className="w-10 h-10" />}
             title="No contacts yet"
@@ -101,7 +101,7 @@ export default function ContactsPage() {
           />
         </div>
       ) : (
-        <div className="rounded-2xl bg-white border border-black/4 overflow-hidden divide-y divide-black/4">
+        <div className="rounded-2xl bg-white border border-black/5 shadow-soft overflow-hidden divide-y divide-black/4">
           {contacts.map((c) => (
             <div key={c.id} className="flex items-center gap-4 px-5 py-4">
               <Avatar name={`${c.firstName} ${c.lastName}`} className="w-9 h-9 text-[12px]" />

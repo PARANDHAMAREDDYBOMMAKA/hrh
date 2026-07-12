@@ -78,7 +78,7 @@ export default function CrmLayout({ children }: { children: React.ReactNode }) {
           </Link>
         </div>
 
-        <nav className="px-4 mt-2 space-y-0.5">
+        <nav className="px-4 mt-2 space-y-1">
           {items.map((item) => {
             const isActive = pathname.startsWith(item.href);
             return (
@@ -88,11 +88,15 @@ export default function CrmLayout({ children }: { children: React.ReactNode }) {
                 onClick={() => setSidebarOpen(false)}
                 className={`group flex items-center gap-3 px-3.5 py-3 rounded-xl text-[13px] transition-all duration-300 ${
                   isActive
-                    ? "bg-foreground text-background font-semibold"
-                    : "text-foreground/40 hover:text-foreground hover:bg-black/3 font-medium"
+                    ? "bg-foreground text-background font-semibold shadow-[0_6px_18px_rgba(0,0,0,0.18)]"
+                    : "text-foreground/40 hover:text-foreground hover:bg-black/[0.035] font-medium"
                 }`}
               >
-                <item.icon className="w-[17px] h-[17px]" />
+                <item.icon
+                  className={`w-[17px] h-[17px] transition-transform duration-300 ${
+                    isActive ? "" : "group-hover:scale-110"
+                  }`}
+                />
                 {item.label}
                 {isActive && <ChevronRight className="w-3.5 h-3.5 ml-auto opacity-50" />}
               </Link>

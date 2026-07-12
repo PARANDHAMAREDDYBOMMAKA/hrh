@@ -172,7 +172,7 @@ export default function LeadsPage() {
       {isLoading ? (
         <Spinner />
       ) : leads.length === 0 ? (
-        <div className="rounded-2xl bg-white border border-black/4">
+        <div className="rounded-2xl bg-white border border-black/5 shadow-soft">
           <EmptyState
             icon={<UserPlus className="w-10 h-10" />}
             title="No leads yet"
@@ -180,7 +180,7 @@ export default function LeadsPage() {
           />
         </div>
       ) : (
-        <div className="rounded-2xl bg-white border border-black/4 overflow-hidden">
+        <div className="rounded-2xl bg-white border border-black/5 shadow-soft overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-[13px]">
               <thead>

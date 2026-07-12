@@ -28,7 +28,7 @@ export function Avatar({ name, className }: { name: string; className?: string }
   return (
     <span
       className={cn(
-        "inline-flex items-center justify-center rounded-full bg-orange-100 text-orange-700 text-[11px] font-bold shrink-0",
+        "inline-flex items-center justify-center rounded-full bg-gradient-to-br from-orange-100 to-amber-100 text-orange-700 text-[11px] font-bold shrink-0 ring-1 ring-orange-200/50",
         className ?? "w-7 h-7"
       )}
     >
@@ -49,13 +49,20 @@ export function StatCard({
   icon?: React.ReactNode;
 }) {
   return (
-    <div className="rounded-2xl bg-white border border-black/4 p-5">
+    <div className="group relative rounded-2xl bg-white border border-black/5 p-5 shadow-soft card-hover overflow-hidden">
+      <div className="absolute inset-x-0 -top-px h-px bg-gradient-to-r from-transparent via-orange-200/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
       <div className="flex items-center justify-between">
         <span className="text-[12px] font-medium text-foreground/40">{label}</span>
-        {icon && <span className="text-foreground/30">{icon}</span>}
+        {icon && (
+          <span className="w-8 h-8 rounded-xl bg-orange-50 text-orange-500 flex items-center justify-center transition-transform duration-500 group-hover:scale-110">
+            {icon}
+          </span>
+        )}
       </div>
-      <div className="mt-2 text-2xl font-bold text-foreground tracking-tight">{value}</div>
-      {hint && <div className="mt-1 text-[12px] text-foreground/40">{hint}</div>}
+      <div className="mt-3 text-[26px] leading-none font-bold text-foreground tracking-tight">
+        {value}
+      </div>
+      {hint && <div className="mt-2 text-[12px] text-foreground/40">{hint}</div>}
     </div>
   );
 }
@@ -72,11 +79,16 @@ export function SectionCard({
   className?: string;
 }) {
   return (
-    <div className={cn("rounded-2xl bg-white border border-black/4", className)}>
+    <div
+      className={cn(
+        "rounded-2xl bg-white border border-black/5 shadow-soft overflow-hidden",
+        className
+      )}
+    >
       {(title || action) && (
-        <div className="flex items-center justify-between px-5 py-4 border-b border-black/4">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-black/[0.06]">
           {typeof title === "string" ? (
-            <h3 className="text-[14px] font-semibold text-foreground">{title}</h3>
+            <h3 className="text-[14px] font-semibold text-foreground tracking-tight">{title}</h3>
           ) : (
             title
           )}
@@ -84,6 +96,26 @@ export function SectionCard({
         </div>
       )}
       {children}
+    </div>
+  );
+}
+
+export function PageHeader({
+  title,
+  subtitle,
+  action,
+}: {
+  title: string;
+  subtitle?: string;
+  action?: React.ReactNode;
+}) {
+  return (
+    <div className="flex items-end justify-between flex-wrap gap-3 reveal-fade">
+      <div>
+        <h2 className="text-[22px] font-bold text-foreground tracking-tight">{title}</h2>
+        {subtitle && <p className="text-[13px] text-foreground/40 mt-1">{subtitle}</p>}
+      </div>
+      {action}
     </div>
   );
 }
@@ -98,10 +130,14 @@ export function EmptyState({
   hint?: string;
 }) {
   return (
-    <div className="flex flex-col items-center justify-center text-center py-16 px-6">
-      {icon && <div className="text-foreground/15 mb-3">{icon}</div>}
+    <div className="flex flex-col items-center justify-center text-center py-16 px-6 reveal-fade">
+      {icon && (
+        <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-50 to-amber-50 flex items-center justify-center text-orange-300 mb-4 shadow-soft">
+          {icon}
+        </div>
+      )}
       <p className="text-[14px] font-semibold text-foreground/60">{title}</p>
-      {hint && <p className="text-[12px] text-foreground/35 mt-1 max-w-xs">{hint}</p>}
+      {hint && <p className="text-[12px] text-foreground/35 mt-1.5 max-w-xs leading-relaxed">{hint}</p>}
     </div>
   );
 }
@@ -135,10 +171,10 @@ export function Drawer({
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ type: "tween", duration: 0.3, ease: [0.25, 1, 0.5, 1] }}
-            className="fixed inset-y-0 right-0 z-50 w-full max-w-md bg-[#fafaf9] flex flex-col shadow-2xl"
+            className="fixed inset-y-0 right-0 z-50 w-full max-w-md bg-[#fafaf9] flex flex-col shadow-soft-lg"
           >
-            <div className="flex items-center justify-between px-6 py-5 border-b border-black/5">
-              <h2 className="text-[16px] font-semibold text-foreground">{title}</h2>
+            <div className="flex items-center justify-between px-6 py-5 border-b border-black/[0.06] bg-white/60 backdrop-blur-xl">
+              <h2 className="text-[16px] font-semibold text-foreground tracking-tight">{title}</h2>
               <button
                 onClick={onClose}
                 className="text-foreground/30 hover:text-foreground transition-colors"
@@ -178,7 +214,7 @@ export function Field({
 }
 
 const inputClass =
-  "w-full rounded-xl border border-black/8 bg-white px-3.5 py-2.5 text-[14px] text-foreground placeholder:text-foreground/25 outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100 transition";
+  "w-full rounded-xl border border-black/[0.08] bg-white px-3.5 py-2.5 text-[14px] text-foreground placeholder:text-foreground/25 outline-none shadow-[0_1px_2px_rgba(0,0,0,0.02)] focus:border-orange-400/70 focus:ring-4 focus:ring-orange-100/60 transition duration-200";
 
 export function Input(props: React.InputHTMLAttributes<HTMLInputElement>) {
   return <input {...props} className={cn(inputClass, props.className)} />;
@@ -201,16 +237,16 @@ export function Button({
 }) {
   const variants = {
     primary:
-      "bg-foreground text-background hover:opacity-90 disabled:opacity-40",
-    ghost: "text-foreground/50 hover:text-foreground hover:bg-black/4",
-    outline: "border border-black/10 text-foreground hover:bg-black/3",
-    danger: "bg-rose-500 text-white hover:bg-rose-600",
+      "bg-foreground text-background shadow-[0_4px_14px_rgba(0,0,0,0.15)] hover:shadow-[0_6px_20px_rgba(0,0,0,0.2)] hover:opacity-95 disabled:opacity-40 disabled:shadow-none",
+    ghost: "text-foreground/50 hover:text-foreground hover:bg-black/[0.04]",
+    outline: "border border-black/10 text-foreground hover:bg-black/[0.03] hover:border-black/20",
+    danger: "bg-rose-500 text-white shadow-[0_4px_14px_rgba(244,63,94,0.25)] hover:bg-rose-600",
   };
   return (
     <button
       {...props}
       className={cn(
-        "inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-[13px] font-semibold transition disabled:cursor-not-allowed",
+        "btn-smooth inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-[13px] font-semibold disabled:cursor-not-allowed",
         variants[variant],
         className
       )}

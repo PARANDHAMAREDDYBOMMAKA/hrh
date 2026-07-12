@@ -90,7 +90,7 @@ export default function AccountDetail({ params }: { params: Promise<{ id: string
         Accounts
       </Link>
 
-      <div className="rounded-2xl bg-white border border-black/4 p-6">
+      <div className="rounded-2xl bg-white border border-black/5 shadow-soft p-6">
         <div className="flex items-start justify-between gap-4 flex-wrap">
           <div className="flex items-center gap-4">
             <div className="w-14 h-14 rounded-2xl bg-orange-50 flex items-center justify-center">
