@@ -147,7 +147,7 @@ export default function AccountDetail({ params }: { params: Promise<{ id: string
                 <Link
                   key={c.id}
                   href={`/crm/contacts?focus=${c.id}`}
-                  className="flex items-center gap-3 px-5 py-3.5 hover:bg-black/[0.015]"
+                  className="flex items-center gap-3 px-5 py-3.5 hover:bg-black/1.5"
                 >
                   <Avatar name={`${c.firstName} ${c.lastName}`} />
                   <div className="min-w-0">
