@@ -2,8 +2,13 @@ import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 import { audit } from "@/lib/audit";
+import { SIGNUP_ENABLED } from "@/lib/flags";
 
 export async function POST(req: Request) {
+  if (!SIGNUP_ENABLED) {
+    return NextResponse.json({ error: "Sign ups are currently disabled" }, { status: 403 });
+  }
+
   try {
     const { name, email, phone, password } = await req.json();
 

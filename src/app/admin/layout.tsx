@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Logo } from "@/components/logo";
+import { OrderNotifications } from "@/components/order-notifications";
 
 const navItems = [
   { href: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -121,6 +122,9 @@ export default function AdminLayout({
             <h1 className="text-[15px] font-semibold text-foreground/70 capitalize tracking-tight">
               {pathname.split("/").pop()?.replace(/-/g, " ")}
             </h1>
+            <div className="ml-auto">
+              <OrderNotifications scope="admin" />
+            </div>
           </div>
         </header>
         <main className="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-8">{children}</main>

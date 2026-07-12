@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Eye, EyeOff, Loader2, CheckCircle, ArrowRight } from "lucide-react";
 import { Logo } from "@/components/logo";
 import { homeForRole } from "@/lib/utils";
+import { SIGNUP_ENABLED } from "@/lib/flags";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
@@ -29,8 +30,8 @@ function AuthPage() {
   const pwChanged = sp.get("passwordChanged") === "true";
   const verified = sp.get("verified") === "true";
   const cbUrl = sp.get("callbackUrl");
-  const [mode, setMode] = useState<"login" | "register">(sp.get("mode") === "register" ? "register" : "login");
-  const isLogin = mode === "login";
+  const [mode, setMode] = useState<"login" | "register">(SIGNUP_ENABLED && sp.get("mode") === "register" ? "register" : "login");
+  const isLogin = SIGNUP_ENABLED ? mode === "login" : true;
 
   const [email, setEmail] = useState("");
   const [pw, setPw] = useState("");
@@ -184,10 +185,12 @@ function AuthPage() {
                   {isLogin ? (
                     <motion.div key="ov-reg" initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }} transition={{ duration: 0.4, ease }}>
                       <h2 className="text-2xl font-bold text-white tracking-tight mb-2">New here?</h2>
-                      <p className="text-white/30 text-[13px] mb-7 leading-relaxed max-w-50 mx-auto">Create an account and start ordering from your hostel</p>
-                      <button type="button" onClick={() => setMode("register")} className="group inline-flex items-center gap-2 px-6 py-3 rounded-full border border-white/15 text-white text-[13px] font-medium hover:bg-white/10 transition-all duration-400">
-                        Sign Up <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
-                      </button>
+                      <p className="text-white/30 text-[13px] mb-7 leading-relaxed max-w-50 mx-auto">{SIGNUP_ENABLED ? "Create an account and start ordering from your hostel" : "Scan the QR code at your property to order — no account needed"}</p>
+                      {SIGNUP_ENABLED && (
+                        <button type="button" onClick={() => setMode("register")} className="group inline-flex items-center gap-2 px-6 py-3 rounded-full border border-white/15 text-white text-[13px] font-medium hover:bg-white/10 transition-all duration-400">
+                          Sign Up <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+                        </button>
+                      )}
                     </motion.div>
                   ) : (
                     <motion.div key="ov-log" initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 30 }} transition={{ duration: 0.4, ease }}>
@@ -207,13 +210,15 @@ function AuthPage() {
         {/* ── Mobile ── */}
         <div className="md:hidden w-full max-w-100">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease }} className="bg-white rounded-2xl shadow-[0_4px_40px_rgba(0,0,0,0.06)] p-6">
-            <div className="flex gap-1 p-1 bg-[#f5f5f4] rounded-xl mb-5">
-              {(["login", "register"] as const).map((m) => (
-                <button key={m} onClick={() => setMode(m)} className={`flex-1 py-2.5 rounded-lg text-[13px] font-medium transition-all duration-300 ${mode === m ? "bg-foreground text-background" : "text-foreground/25"}`}>
-                  {m === "login" ? "Sign In" : "Sign Up"}
-                </button>
-              ))}
-            </div>
+            {SIGNUP_ENABLED && (
+              <div className="flex gap-1 p-1 bg-[#f5f5f4] rounded-xl mb-5">
+                {(["login", "register"] as const).map((m) => (
+                  <button key={m} onClick={() => setMode(m)} className={`flex-1 py-2.5 rounded-lg text-[13px] font-medium transition-all duration-300 ${mode === m ? "bg-foreground text-background" : "text-foreground/25"}`}>
+                    {m === "login" ? "Sign In" : "Sign Up"}
+                  </button>
+                ))}
+              </div>
+            )}
             <AnimatePresence mode="wait">
               {isLogin ? (
                 <motion.form key="ml" variants={stagger} initial="hidden" animate="visible" exit="exit" onSubmit={doLogin} className="space-y-4">

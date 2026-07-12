@@ -97,7 +97,10 @@ model Order {
   id               String      @id @default(cuid())
   orderNumber      String      @unique @default(cuid())
   partnerId        String
-  customerId       String
+  customerId       String?
+  customerName     String      @default("")
+  customerPhone    String      @default("")
+  trackingToken    String?     @unique @default(cuid())
   roomNumber       String
   deliveryNotes    String?
   items            Json
@@ -110,7 +113,7 @@ model Order {
   updatedAt        DateTime    @updatedAt
 
   partner  Partner @relation(fields: [partnerId], references: [id])
-  customer User    @relation(fields: [customerId], references: [id])
+  customer User?   @relation(fields: [customerId], references: [id])
 
   @@index([partnerId, status])
   @@index([customerId, createdAt])

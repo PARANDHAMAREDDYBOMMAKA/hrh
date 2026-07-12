@@ -7,6 +7,7 @@ import Link from "next/link";
 import { LayoutDashboard, ShoppingBag, LogOut, Menu, X, ChevronRight } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Logo } from "@/components/logo";
+import { OrderNotifications } from "@/components/order-notifications";
 
 const navItems = [
   { href: "/partner/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -82,6 +83,9 @@ export default function PartnerLayout({ children }: { children: React.ReactNode 
               {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
             <h1 className="text-[15px] font-semibold text-foreground/70 capitalize tracking-tight">{pathname.split("/").pop()?.replace(/-/g, " ")}</h1>
+            <div className="ml-auto">
+              <OrderNotifications scope="partner" />
+            </div>
           </div>
         </header>
         <main className="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-8">{children}</main>

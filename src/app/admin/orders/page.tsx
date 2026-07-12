@@ -11,7 +11,8 @@ interface Order {
   id: string; orderNumber: string; roomNumber: string; deliverySlot: string;
   status: string; totalAmount: number; commissionAmount: number;
   items: OrderItem[]; deliveryNotes: string | null; createdAt: string;
-  partner: { name: string }; customer: { name: string; email: string };
+  customerName: string; customerPhone: string;
+  partner: { name: string }; customer: { name: string; email: string } | null;
 }
 
 const statusFlow = ["PENDING", "CONFIRMED", "PREPARING", "READY", "OUT_FOR_DELIVERY", "DELIVERED"];
@@ -130,7 +131,8 @@ export default function OrdersPage() {
                         <span className="text-[11px] px-2 py-0.5 rounded-md bg-orange-50 text-orange-600 font-medium">{order.deliverySlot}</span>
                       </div>
                       <div className="mt-2 text-[13px] text-foreground/40">
-                        <span className="font-medium text-foreground/60">{order.customer?.name}</span>
+                        <span className="font-medium text-foreground/60">{order.customerName || order.customer?.name}</span>
+                        {(order.customerPhone || order.customer?.email) && <span> &middot; {order.customerPhone || order.customer?.email}</span>}
                         {" "}&middot; {order.partner?.name} &middot; Room {order.roomNumber}
                       </div>
                       <div className="mt-2 flex flex-wrap gap-1">

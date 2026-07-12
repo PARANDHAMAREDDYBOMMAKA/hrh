@@ -33,17 +33,20 @@ export async function GET(req: Request) {
 
 export async function POST(req: Request) {
   const session = await getServerSession(authOptions);
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
-  if (session.user.role !== "CUSTOMER") {
-    return NextResponse.json({ error: "Only customers can place orders" }, { status: 403 });
-  }
+  const isCustomerSession = session?.user.role === "CUSTOMER";
 
   try {
-    const { partnerId, roomNumber, items, deliverySlot, deliveryNotes } = await req.json();
+    const { partnerId, customerName, customerPhone, roomNumber, items, deliverySlot, deliveryNotes } =
+      await req.json();
+
+    const name = (customerName ?? "").toString().trim();
+    const phone = (customerPhone ?? "").toString().trim();
 
     if (!partnerId || !roomNumber || !items?.length || !deliverySlot) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+    }
+    if (!name || !phone) {
+      return NextResponse.json({ error: "Name and phone are required" }, { status: 400 });
     }
 
     const partner = await prisma.partner.findUnique({ where: { id: partnerId } });
@@ -60,7 +63,9 @@ export async function POST(req: Request) {
     const order = await prisma.order.create({
       data: {
         partnerId,
-        customerId: session.user.id,
+        customerId: isCustomerSession ? session!.user.id : null,
+        customerName: name,
+        customerPhone: phone,
         roomNumber: roomNumber.trim(),
         deliveryNotes: deliveryNotes?.trim() || null,
         items,
@@ -74,17 +79,21 @@ export async function POST(req: Request) {
       action: "ORDER_CREATE",
       entityType: "Order",
       entityId: order.id,
-      actor: actorOf(session),
+      actor: session ? actorOf(session) : null,
       metadata: {
         orderNumber: order.orderNumber,
         partnerId,
         totalAmount,
         deliverySlot,
         itemCount: items.length,
+        guest: !isCustomerSession,
       },
     });
 
-    return NextResponse.json(order, { status: 201 });
+    return NextResponse.json(
+      { id: order.id, orderNumber: order.orderNumber, trackingToken: order.trackingToken },
+      { status: 201 }
+    );
   } catch {
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }

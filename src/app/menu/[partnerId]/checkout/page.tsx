@@ -1,19 +1,45 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useCart } from "@/hooks/use-cart";
 import { useRouter, useParams } from "next/navigation";
-import { useSession } from "next-auth/react";
 import { toast } from "sonner";
 import Link from "next/link";
 import { ArrowLeft, Circle, Loader2, UtensilsCrossed } from "lucide-react";
 
+const GUEST_KEY = "hrh-guest";
+const ORDERS_KEY = "hrh-orders";
+
+function loadGuest(): { name: string; phone: string; room: string } {
+  if (typeof window === "undefined") return { name: "", phone: "", room: "" };
+  try {
+    const saved = localStorage.getItem(GUEST_KEY);
+    if (!saved) return { name: "", phone: "", room: "" };
+    const p = JSON.parse(saved);
+    return { name: p.name || "", phone: p.phone || "", room: p.room || "" };
+  } catch {
+    return { name: "", phone: "", room: "" };
+  }
+}
+
+function rememberOrder(token: string, orderNumber: string) {
+  try {
+    const raw = localStorage.getItem(ORDERS_KEY);
+    const list: { token: string; orderNumber: string; at: string }[] = raw ? JSON.parse(raw) : [];
+    list.unshift({ token, orderNumber, at: new Date().toISOString() });
+    localStorage.setItem(ORDERS_KEY, JSON.stringify(list.slice(0, 20)));
+  } catch {
+    return;
+  }
+}
+
 export default function CheckoutPage() {
   const { items, totalAmount, clearCart, partnerId } = useCart();
-  const { data: session } = useSession();
   const router = useRouter();
   const params = useParams();
-  const [roomNumber, setRoomNumber] = useState("");
+  const [name, setName] = useState(() => loadGuest().name);
+  const [phone, setPhone] = useState(() => loadGuest().phone);
+  const [roomNumber, setRoomNumber] = useState(() => loadGuest().room);
   const [deliveryNotes, setDeliveryNotes] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -21,24 +47,15 @@ export default function CheckoutPage() {
   const hour = now.getHours();
   const deliverySlot = hour < 12 ? "BREAKFAST" : "DINNER";
 
-  const role = (session?.user as { role?: string } | undefined)?.role;
-
-  useEffect(() => {
-    if (role === "ADMIN") router.replace("/admin/dashboard");
-    else if (role === "PARTNER") router.replace("/partner/dashboard");
-  }, [role, router]);
-
   async function handleOrder() {
-    if (!session) {
-      router.push(`/login?callbackUrl=/menu/${params.partnerId}/checkout`);
+    if (!name.trim()) {
+      toast.error("Please enter your name");
       return;
     }
-
-    if (role && role !== "CUSTOMER") {
-      toast.error("Only customers can place orders");
+    if (!phone.trim()) {
+      toast.error("Please enter your phone number");
       return;
     }
-
     if (!roomNumber.trim()) {
       toast.error("Please enter your room number");
       return;
@@ -48,11 +65,22 @@ export default function CheckoutPage() {
 
     const orderPartnerId = partnerId || params.partnerId;
 
+    try {
+      localStorage.setItem(
+        GUEST_KEY,
+        JSON.stringify({ name: name.trim(), phone: phone.trim(), room: roomNumber.trim() })
+      );
+    } catch {
+      void 0;
+    }
+
     const res = await fetch("/api/orders", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         partnerId: orderPartnerId,
+        customerName: name.trim(),
+        customerPhone: phone.trim(),
         roomNumber: roomNumber.trim(),
         items: items.map((i) => ({ menuItemId: i.id, name: i.name, quantity: i.quantity, price: i.price, subtotal: i.price * i.quantity })),
         deliverySlot,
@@ -61,15 +89,16 @@ export default function CheckoutPage() {
     });
 
     if (res.ok) {
-      clearCart();
-      toast.success("Order placed successfully!");
-      router.push("/customer/orders");
-    } else {
       const data = await res.json();
+      clearCart();
+      if (data.trackingToken) rememberOrder(data.trackingToken, data.orderNumber);
+      toast.success("Order placed successfully!");
+      router.push(data.trackingToken ? `/track/${data.trackingToken}` : `/menu/${orderPartnerId}`);
+    } else {
+      const data = await res.json().catch(() => ({}));
       toast.error(data.error || "Failed to place order");
+      setLoading(false);
     }
-
-    setLoading(false);
   }
 
   const inp = "w-full px-4 py-3 rounded-xl bg-[#f5f5f4] border-0 text-foreground placeholder-foreground/20 focus:outline-none focus:ring-2 focus:ring-foreground/10 transition-all duration-300 text-[13px]";
@@ -122,9 +151,30 @@ export default function CheckoutPage() {
           </div>
         </div>
 
-        {/* Delivery details */}
+        {/* Your details */}
         <div className="rounded-2xl bg-white border border-black/4 p-5 space-y-4">
-          <h2 className="font-bold text-[14px] tracking-tight">Delivery Details</h2>
+          <h2 className="font-bold text-[14px] tracking-tight">Your Details</h2>
+          <div>
+            <label className="block text-[12px] font-medium text-foreground/35 mb-1.5">Name *</label>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="e.g., Rahul"
+              className={inp}
+            />
+          </div>
+          <div>
+            <label className="block text-[12px] font-medium text-foreground/35 mb-1.5">Phone Number *</label>
+            <input
+              type="tel"
+              inputMode="tel"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              placeholder="e.g., 98765 43210"
+              className={inp}
+            />
+          </div>
           <div>
             <label className="block text-[12px] font-medium text-foreground/35 mb-1.5">Room Number *</label>
             <input
@@ -151,12 +201,6 @@ export default function CheckoutPage() {
           </div>
         </div>
 
-        {!session && (
-          <div className="p-3.5 rounded-xl bg-amber-50 border border-amber-200/50 text-[13px] text-amber-700">
-            You need to sign in to place an order.
-          </div>
-        )}
-
         <button
           onClick={handleOrder}
           disabled={loading}
@@ -167,10 +211,8 @@ export default function CheckoutPage() {
               <Loader2 className="w-4 h-4 animate-spin" />
               Placing order...
             </>
-          ) : session ? (
-            `Place Order — ₹${totalAmount.toFixed(0)}`
           ) : (
-            "Sign in to Order"
+            `Place Order — ₹${totalAmount.toFixed(0)}`
           )}
         </button>
       </div>

@@ -10,7 +10,8 @@ interface Order {
   id: string; orderNumber: string; roomNumber: string; deliverySlot: string;
   status: string; totalAmount: number; commissionAmount: number;
   items: OrderItem[]; deliveryNotes: string | null; createdAt: string;
-  customer: { name: string; email: string; phone: string | null };
+  customerName: string; customerPhone: string;
+  customer: { name: string; email: string; phone: string | null } | null;
 }
 
 const statusFlow = ["PENDING", "CONFIRMED", "PREPARING", "READY", "OUT_FOR_DELIVERY", "DELIVERED"];
@@ -111,8 +112,8 @@ export default function PartnerOrdersPage() {
                         <span className="text-[11px] px-2 py-0.5 rounded-md bg-orange-50 text-orange-600 font-medium">{order.deliverySlot}</span>
                       </div>
                       <div className="mt-2 text-[13px] text-foreground/40">
-                        <span className="font-medium text-foreground/60">{order.customer?.name}</span>
-                        {order.customer?.phone && <span> &middot; {order.customer.phone}</span>}
+                        <span className="font-medium text-foreground/60">{order.customerName || order.customer?.name}</span>
+                        {(order.customerPhone || order.customer?.phone) && <span> &middot; {order.customerPhone || order.customer?.phone}</span>}
                         {" "}&middot; Room {order.roomNumber}
                       </div>
                       <div className="mt-2 flex flex-wrap gap-1">
